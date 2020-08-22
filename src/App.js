@@ -7,50 +7,67 @@
  */
 
 import React from 'react';
+import {SafeAreaView, StatusBar} from 'react-native';
 import {
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+  Root,
+  Container,
+  Header,
+  Body,
+  Title,
+  Content,
+  Footer,
+  FooterTab,
+  Button,
+  Icon,
+  Text,
+  Badge,
+} from 'native-base';
 
+import { Provider } from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {store, persistor} from './reducers/storeConfig';
 
-import { Container, Header,Body,Title,Content, Footer, FooterTab, Button, Icon, Text, Badge } from 'native-base';
+import {addAccount, deleteAccount} from './actions/index';
 
 const App: () => React$Node = () => {
+
   return (
-    <>
-      <SafeAreaView>
-        <Container>
-          <Header>
-            <Body>
-              <Title>test 3</Title>
-            </Body>
-          </Header>
-          <Content></Content>
-          <Footer>
-          <FooterTab>
-          <Button badge vertical>
-              <Badge><Text>2</Text></Badge>
-              <Icon name="apps" />
-              <Text>Apps</Text>
-            </Button>
-            <Button vertical>
-              <Icon name="camera" />
-              <Text>Camera</Text>
-            </Button>
-            <Button active badge vertical>
-              <Badge ><Text>51</Text></Badge>
-              <Icon active name="navigate" />
-              <Text>Navigate</Text>
-            </Button>
-            <Button vertical>
-              <Icon name="person" />
-              <Text>Contact</Text>
-            </Button>
-          </FooterTab>
-          </Footer>
-        </Container>
-      </SafeAreaView>
-    </>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaView>
+            <Container>
+              <Header>
+                <Body>
+                  <Title>test 3</Title>
+                </Body>
+              </Header>
+              <Content>
+                <Text>Contenddt</Text>
+              </Content>
+              <Footer>
+                <FooterTab>
+                  <Button vertical>
+                    <Text>Compte </Text>
+                  </Button>
+                  <Button badge vertical>
+                    <Badge>
+                      <Text>2</Text>
+                    </Badge>
+                    <Icon name="book" />
+                    <Text>Prêts</Text>
+                  </Button>
+                  <Button badge active>
+                    <Badge>
+                      <Text>2</Text>
+                    </Badge>
+                    <Text>Résa</Text>
+                  </Button>
+                </FooterTab>
+              </Footer>
+            </Container>
+          </SafeAreaView>
+      </PersistGate>
+    </Provider>
   );
 };
 

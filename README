@@ -1,0 +1,11 @@
+
+react-native link
+react-native link @react-native-community/async-storage
+
+watchman watch-del-all && npm start -- --reset-cache
+
+https://enappd.com/blog/redux-in-react-native-app/92/
+
+https://mosaika.fr/redux-appli-mobile-react-native/
+
+https://www.digitalocean.com/community/tutorials/react-react-native-redux
