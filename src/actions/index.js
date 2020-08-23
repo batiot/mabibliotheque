@@ -15,9 +15,9 @@ export const addAccount = data => {
  * delete account
  * @param {object} data The account uuid
  */
-export const deleteAccount = uid => {
+export const deleteAccount = uuid => {
 	return {
 		type: DELETE_ACCOUNT,
-		uid,
+		uuid,
 	};
 };
