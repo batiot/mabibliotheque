@@ -9,3 +9,31 @@ https://enappd.com/blog/redux-in-react-native-app/92/
 https://mosaika.fr/redux-appli-mobile-react-native/
 
 https://www.digitalocean.com/community/tutorials/react-react-native-redux
+
+https://create-react-app.dev/docs/adding-custom-environment-variables/
+
+https://dev.to/markusclaus/fetching-data-from-an-api-using-reactredux-55ao
+
+<View>
+  <Item error={error && touched}>
+    <Icon active name={input.name === "email" ? "person" : "unlock"} />
+    <Input
+      ref={c => (this.textInput = c)}
+      placeholder={input.name === "email" ? "Email" : "Password"}
+      secureTextEntry={input.name === "password" ? true : false}
+      {...input}
+    />
+  </Item>
+  {error && touched && <Text>Please enter valid data</Text>}
+</View>
+
+<InputGroup 
+  iconRight 
+  success={this.state.inputSuccess ? true : false} 
+  error={this.state.inputError ? true : false}>
+  <Input placeholder='Textbox'/>
+</InputGroup>
+
+<Icon name={this.state.inputSuccess ? 'checkmark-circle' : 'close-circle'}/>
+
+mapDispatchToProps

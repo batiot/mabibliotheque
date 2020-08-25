@@ -23,9 +23,9 @@ class AppContainer extends Component {
           <Title>test 3</Title>
         </Header>
         <Content>
-          <Text>Content xx</Text>
+          <Text>Content xx </Text>
           {this.props.accounts.map((account) => (
-            <Text key={account.uuid}>{account.name}</Text>
+            <Text key={account.uuid}>{account.userName}</Text>
           ))}
         </Content>
         <Footer>
