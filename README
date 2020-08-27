@@ -1,7 +1,5 @@
 
 react-native link
-react-native link @react-native-community/async-storage
-
 watchman watch-del-all && npm start -- --reset-cache
 
 https://enappd.com/blog/redux-in-react-native-app/92/
@@ -11,8 +9,12 @@ https://mosaika.fr/redux-appli-mobile-react-native/
 https://www.digitalocean.com/community/tutorials/react-react-native-redux
 
 https://create-react-app.dev/docs/adding-custom-environment-variables/
+Env vars ->Use babel-plugin-transform-inline-environment-variables 
 
 https://dev.to/markusclaus/fetching-data-from-an-api-using-reactredux-55ao
+
+https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns
+immutablility ->Use immer
 
 <View>
   <Item error={error && touched}>

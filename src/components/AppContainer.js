@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   Container,
   Header,
-  Body,
   Title,
   Content,
   Footer,
@@ -13,7 +12,7 @@ import {
   Badge,
 } from 'native-base';
 import {connect} from 'react-redux';
-import {addAccount, deleteAccount} from '../actions/index';
+import {addAccount, deleteAccount} from '../actions/accountAction';
 
 class AppContainer extends Component {
   render() {
@@ -23,7 +22,7 @@ class AppContainer extends Component {
           <Title>test 3</Title>
         </Header>
         <Content>
-          <Text>Content xx </Text>
+         <Text>Content a</Text>
           {this.props.accounts.map((account) => (
             <Text key={account.uuid}>{account.userName}</Text>
           ))}
