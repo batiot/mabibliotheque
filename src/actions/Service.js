@@ -22,14 +22,15 @@
     let bodyText = await resp.text();
 
     let account = {};
-    account.card_id = bodyText.substr(bodyText.indexOf('card_id') + 10, 7).replace('\'',''); //card_id: '974920',
-    account.user_id = bodyText.substr(bodyText.indexOf('user_id') + 16, 5).replace('\"',''); //<input type="hidden" name="user_id" value="5675"/>
+    account.cardId = bodyText.substr(bodyText.indexOf('card_id') + 10, 7).replace('\'',''); //card_id: '974920',
+    account.userId = bodyText.substr(bodyText.indexOf('user_id') + 16, 5).replace('\"',''); //<input type="hidden" name="user_id" value="5675"/>
     account.token = bodyText.substr(bodyText.indexOf('token=') + 6, 33); // var wbs_url = 'http://www.la-bibliotheque.com/osiros/web/services/ws.pretsEnCours.php?token=osik58c2c9ds8vf1gb56dza5c6132cq6s&id_user=5685';
+    //account.tokenValidUntil
     let blockMesInfos = bodyText.substr(bodyText.indexOf('Mes informations</h1><br><br>') + 50, 310);
     console.log(account,'Mes informations',blockMesInfos);
     let result = blockMesInfos.match(/<p>(.*?)<\/p>/g);
-    account.name = result[0].substring(3, result[0].length - 4);
-    account.startDate = result[2].substring(51, result[2].length - 4);
+    account.userName = result[0].substring(3, result[0].length - 4);
+    account.cardStartDate = result[2].substring(51, result[2].length - 4);
     //<section id="section_infos_emprunteur" class="section_prets" style="background-color:white; ">
     //<h1 class="SQtitle2 SQblack">Mes informations</h1><br><br>
     //<div class="pret_liste">
