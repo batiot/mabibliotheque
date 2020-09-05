@@ -16,6 +16,12 @@ https://dev.to/markusclaus/fetching-data-from-an-api-using-reactredux-55ao
 https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns
 immutablility ->Use immer
 
+https://github.com/reduxjs/redux-thunk
+thunk
+
+https://docs.nativebase.io/docs/examples/navigation/StackNavigationExample.html
+navigation
+
 <View>
   <Item error={error && touched}>
     <Icon active name={input.name === "email" ? "person" : "unlock"} />

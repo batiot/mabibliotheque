@@ -6,19 +6,19 @@ import {
   FETCH_ACCOUNT_ERROR,
 } from '../actions/actionTypes';
 
-import produce from "immer";
+import produce from 'immer';
 
 const initialStateAccounts = {
-  '1':{cardId: '1', userName: 'david'},
-  '2':{cardId: '2', userName: 'lisa'},
-  '3':{cardId: '3', userName: 'charlie'},
-  '4':{cardId: '4', userName: 'émie'},
+  '1': {cardId: '1', userName: 'david'},
+  '2': {cardId: '2', userName: 'lisa'},
+  '3': {cardId: '3', userName: 'charlie'},
+  '4': {cardId: '4', userName: 'émie'},
 };
 const example = {
-  cardId: 18256,
+  cardId: '18256',
   cardStartDate: '2020-04-23T18:25:43.511Z',
   password: 'mypassword',
-  userId: 145,
+  userId: '145',
   userName: 'mathieu',
   token: '245434254534d354354135',
   tokenValidUntil: '2012-04-23T18:25:43.511Z',
@@ -29,33 +29,38 @@ const example = {
 };
 export default function (state = initialStateAccounts, action) {
   switch (action.type) {
-    case ADD_ACCOUNT: {
-      return immer.produce(state, draftState => {
-        draftState[action.credentials.cardId].cardId = action.credentials.cardId;
-        draftState[action.credentials.cardId].password = action.credentials.password;
-        draftState[action.credentials.cardId].pending = true;
+    case DELETE_ACCOUNT: {
+      return produce(state, (draftState) => {
+        delete draftState[action.payload];
       });
     }
-    case DELETE_ACCOUNT: {
-      return state.filter((account) => account.cardId !== action.cardId);
-    }
     case FETCH_ACCOUNT_PENDING:
-      return immer.produce(state, draftState => {
-          draftState[action.cardId].pending = true
-          //draftState[0].address.city = 'Paris'
-        });
+      return produce(state, (draftState) => {
+        if(!draftState[action.payload]){
+          draftState[action.payload]={};
+        }
+        draftState[action.payload].pending = true;
+        draftState[action.payload].cardId = action.payload;
+        draftState[action.payload].userName = '. . .';
+        console.log('pending',draftState)
+      });
     case FETCH_ACCOUNT_SUCCESS:
-      return {
-        ...state,
-        pending: false,
-        products: action.account,
-      };
+      return produce(state, (draftState) => {
+        console.log(action.payload.cardId,draftState,draftState[action.payload.cardId] );
+        draftState[action.payload.cardId].pending = false;
+        draftState[action.payload.cardId].cardId = action.payload.cardId;
+        draftState[action.payload.cardId].cardStartDate =
+          action.payload.cardStartDate;
+        draftState[action.payload.cardId].userId = action.payload.userId;
+        draftState[action.payload.cardId].token = action.payload.token;
+        draftState[action.payload.cardId].userName = action.payload.userName;
+        draftState[action.payload.cardId].error = null;
+      });
     case FETCH_ACCOUNT_ERROR:
-      return {
-        ...state,
-        pending: false,
-        error: action.error,
-      };
+      return produce(state, (draftState) => {
+        draftState[action.payload].pending = false;
+        draftState[action.payload].error = action.error;
+      });
     default: {
       return state;
     }

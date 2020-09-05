@@ -1,48 +1,42 @@
 import { ADD_ACCOUNT, DELETE_ACCOUNT,FETCH_ACCOUNT_PENDING,FETCH_ACCOUNT_SUCCESS,FETCH_ACCOUNT_ERROR } from "./actionTypes";
 
 /**
- * Try to add new account
- * @param {object} credentials: cardId , password
- */
-export const addAccount = credentials => {
-	return {
-		type: ADD_ACCOUNT,
-		credentials: credentials
-	};
-};
-
-/**
  * delete account
  * @param {object} cardId The account cardId
  */
 export const deleteAccount = cardId => {
 	return {
 		type: DELETE_ACCOUNT,
-		cardId: cardId
+		payload: cardId
 	};
 };
 
-export const fetchAccountPending = credentials => {
+/**
+ * Start fetching account data
+ * @param {object} cardId The account cardId
+ */
+export const fetchAccountPending = cardId => {
     return {
         type: FETCH_ACCOUNT_PENDING,
-        cardId: credentials.cardId
+        payload: cardId
     }
 }
 
 /**
  * Successly fecthed account
- * @param {object} cardId The account cardId
+ * @param {object} accountData The account data
  */
-export const fetchAccountSuccess = account => {
+export const fetchAccountSuccess = accountData => {
     return {
         type: FETCH_ACCOUNT_SUCCESS,
-        account: account
+        payload: accountData
     }
 }
 
-export const fetchAccountError = error => {
+export const fetchAccountError = (cardId,error) => {
     return {
         type: FETCH_ACCOUNT_ERROR,
+        payload: cardId,
         error: error
     }
 }
