@@ -10,6 +10,9 @@ import {
   Icon,
   Text,
   Badge,
+  Right,
+  Body,
+  Left
 } from 'native-base';
 import Accounts from '../components/Accounts';
 import {connect} from 'react-redux';
@@ -19,10 +22,17 @@ class AppContainer extends Component {
     return (
       <Container>
         <Header>
-          <Title>test 3</Title>
+          <Left></Left>
+          <Body>
+            <Title>test 3</Title>
+          </Body>
+          <Right>
+            <Button transparent>
+              <Icon name="search" />
+            </Button>
+          </Right>
         </Header>
         <Content>
-          <Text>Content d</Text>
           <Accounts></Accounts>
         </Content>
         <Footer>
@@ -50,12 +60,10 @@ class AppContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-
-});
+const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => {
-  return { };
+  return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

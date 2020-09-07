@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Button, Text} from 'native-base';
+import {Container, Button, Text, List, ListItem, Spinner} from 'native-base';
 import {connect} from 'react-redux';
 import {
   deleteAccount,
@@ -13,9 +13,16 @@ class Accounts extends Component {
   render() {
     return (
       <Container>
-        {Object.values(this.props.accounts).map((account) => (
-          <Text key={account.cardId}>{account.userName}</Text>
-        ))}
+        <List>
+          {Object.values(this.props.accounts).map((account) => (
+            <ListItem>
+              <Text key={account.cardId}>{account.userName}</Text>
+              <Button onPress={() => this.props.deleteAccount(account.cardId)}>
+                <Text>Delete</Text>
+              </Button>
+            </ListItem>
+          ))}          
+        </List>
         <Button
           onPress={() =>
             this.props.addAccount({cardId: '965694', password: 'bati'})
@@ -23,12 +30,7 @@ class Accounts extends Component {
           <Text>Add Account</Text>
         </Button>
         <Text>testd </Text>
-        <Button onPress={() => this.props.deleteAccount('965694')}>
-          <Text>Delete</Text>
-        </Button>
-        <Button onPress={() => alert('This is Card Header')}>
-          <Text>tesft</Text>
-        </Button>
+
       </Container>
     );
   }
