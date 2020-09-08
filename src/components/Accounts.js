@@ -15,13 +15,13 @@ class Accounts extends Component {
       <Container>
         <List>
           {Object.values(this.props.accounts).map((account) => (
-            <ListItem>
+            <ListItem key={account.cardId}>
               <Text key={account.cardId}>{account.userName}</Text>
               <Button onPress={() => this.props.deleteAccount(account.cardId)}>
                 <Text>Delete</Text>
               </Button>
             </ListItem>
-          ))}          
+          ))}
         </List>
         <Button
           onPress={() =>
@@ -29,8 +29,6 @@ class Accounts extends Component {
           }>
           <Text>Add Account</Text>
         </Button>
-        <Text>testd </Text>
-
       </Container>
     );
   }

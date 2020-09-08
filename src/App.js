@@ -1,27 +1,20 @@
-/**
- * 
- * redux plugin
- *
- */
+import 'react-native-gesture-handler';
 import React from 'react';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {store} from './reducers/storeConfig';
 import {persistor} from './reducers/storeConfig';
-
+import {NavigationContainer} from '@react-navigation/native';
 import AppContainer from './components/AppContainer';
-import {enableES5} from "immer"
 
-enableES5();//A voir si c'est utile pour react native
-
-const App: () => React$Node = () => {
+export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-            <AppContainer></AppContainer>
+        <NavigationContainer>
+          <AppContainer />
+        </NavigationContainer>
       </PersistGate>
     </Provider>
   );
-};
-
-export default App;
+}

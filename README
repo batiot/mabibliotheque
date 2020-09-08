@@ -1,26 +1,29 @@
 
-react-native link
-watchman watch-del-all && npm start -- --reset-cache
 
+Credits:
+
+Redux
 https://enappd.com/blog/redux-in-react-native-app/92/
-
 https://mosaika.fr/redux-appli-mobile-react-native/
-
 https://www.digitalocean.com/community/tutorials/react-react-native-redux
 
-https://create-react-app.dev/docs/adding-custom-environment-variables/
 Env vars ->Use babel-plugin-transform-inline-environment-variables 
+https://create-react-app.dev/docs/adding-custom-environment-variables/
 
+fetch
 https://dev.to/markusclaus/fetching-data-from-an-api-using-reactredux-55ao
 
-https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns
 immutablility ->Use immer
+https://redux.js.org/recipes/structuring-reducers/immutable-update-patterns
 
-https://github.com/reduxjs/redux-thunk
 thunk
+https://github.com/reduxjs/redux-thunk
 
-https://docs.nativebase.io/docs/examples/navigation/StackNavigationExample.html
+
 navigation
+https://docs.nativebase.io/docs/examples/navigation/StackNavigationExample.html (outdated)  
+https://reactnavigation.org/docs/getting-started
+https://reactnavigation.org/docs/bottom-tab-navigator/
 
 <View>
   <Item error={error && touched}>
@@ -41,7 +44,4 @@ navigation
   error={this.state.inputError ? true : false}>
   <Input placeholder='Textbox'/>
 </InputGroup>
-
 <Icon name={this.state.inputSuccess ? 'checkmark-circle' : 'close-circle'}/>
-
-mapDispatchToProps
