@@ -25,6 +25,12 @@ https://docs.nativebase.io/docs/examples/navigation/StackNavigationExample.html 
 https://reactnavigation.org/docs/getting-started
 https://reactnavigation.org/docs/bottom-tab-navigator/
 
+cookie managment
+https://locastic.com/blog/react-native-cookie-based-authentication/
+
+Form managment
+https://formik.org/docs/guides/react-native
+
 <View>
   <Item error={error && touched}>
     <Icon active name={input.name === "email" ? "person" : "unlock"} />

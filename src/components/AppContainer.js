@@ -15,8 +15,10 @@ import {
   Body,
   Left,
   View,
+  Root
 } from 'native-base';
-import Accounts from '../components/Accounts';
+import AccountList from '../components/AccountList';
+import AccountDetail from '../components/AccountDetail';
 import {connect} from 'react-redux';
 
 function LoanScreen() {
@@ -49,7 +51,7 @@ function AccountScreen() {
         </Right>
       </Header>
       <Content>
-        <Accounts></Accounts>
+        <AccountList></AccountList>
       </Content>
     </>
   );
@@ -108,6 +110,7 @@ const Tab = createBottomTabNavigator();
 class AppContainer extends Component {
   render() {
     return (
+      <Root>
       <Container>
         <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
           <Tab.Screen
@@ -117,7 +120,7 @@ class AppContainer extends Component {
           />
           <Tab.Screen
             name="loan"
-            component={LoanScreen}
+            component={AccountDetail}
             options={{tabBarLabel: 'Prêt', tabBarBadge: 2, tabBarIcon:<Icon name="book" />}}
           />
           <Tab.Screen
@@ -127,6 +130,7 @@ class AppContainer extends Component {
           />
         </Tab.Navigator>
       </Container>
+      </Root>
     );
   }
 }

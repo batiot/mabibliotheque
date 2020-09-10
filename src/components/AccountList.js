@@ -9,7 +9,7 @@ import {
 } from '../actions/accountAction';
 import {WS} from '../services';
 
-class Accounts extends Component {
+class AccountList extends Component {
   render() {
     return (
       <Container>
@@ -35,13 +35,10 @@ class Accounts extends Component {
 }
 
 export function loginThunk(credentials) {
-  console.log('loginThunk');
   // Redux Thunk will inject dispatch here:
   return (dispatch) => {
     // Reducers may handle this to set a flag like isFetching
     dispatch(fetchAccountPending(credentials.cardId));
-    console.log('fetchAccountPending');
-
     // Perform the actual API call
     return WS.login(credentials.cardId, credentials.password)
       .then((accountData) => {
@@ -66,4 +63,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Accounts);
+export default connect(mapStateToProps, mapDispatchToProps)(AccountList);

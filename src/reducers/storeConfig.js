@@ -2,7 +2,7 @@ import { createStore, combineReducers,applyMiddleware } from 'redux';
 import { persistStore, persistReducer } from "redux-persist";
 import thunk from 'redux-thunk';
 import AsyncStorage from '@react-native-community/async-storage'
-import accountsReducer from './accountsReducer.js';
+import accountReducer from './accountReducer.js';
 
 const persistConfig = {
 	key: "mabibliotheque",
@@ -11,7 +11,7 @@ const persistConfig = {
 
 
 const allReducers = combineReducers({
-    accounts: accountsReducer,
+    accounts: accountReducer,
 	//loan: loanReducer,
 });
 
