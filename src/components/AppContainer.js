@@ -15,8 +15,11 @@ import {
   Body,
   Left,
   View,
-  Root
+  Root,
+  StyleProvider
 } from 'native-base';
+import getTheme from '../../native-base-theme/components';
+import material from '../../native-base-theme/variables/material';
 import AccountList from '../components/AccountList';
 import AccountDetail from '../components/AccountDetail';
 import {connect} from 'react-redux';
@@ -94,8 +97,12 @@ function MyTabBar({state, descriptors, navigation}) {
               active={isFocused}
               onPress={onPress}
               onLongPress={onLongPress}>
-              { options.tabBarBadge ?(<Badge><Text>{options.tabBarBadge}</Text></Badge>):null }
-              { options.tabBarIcon ? options.tabBarIcon :null }
+              {options.tabBarBadge ? (
+                <Badge>
+                  <Text>{options.tabBarBadge}</Text>
+                </Badge>
+              ) : null}
+              {options.tabBarIcon ? options.tabBarIcon : null}
               <Text>{options.tabBarLabel}</Text>
             </Button>
           );
@@ -111,25 +118,31 @@ class AppContainer extends Component {
   render() {
     return (
       <Root>
-      <Container>
-        <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
-          <Tab.Screen
-            name="account"
-            component={AccountScreen}
-            options={{tabBarLabel: 'Carte'}}
-          />
-          <Tab.Screen
-            name="loan"
-            component={AccountDetail}
-            options={{tabBarLabel: 'Prêt', tabBarBadge: 2, tabBarIcon:<Icon name="book" />}}
-          />
-          <Tab.Screen
-            name="booking"
-            component={BookingScreen}
-            options={{tabBarLabel: 'Résa'}}
-          />
-        </Tab.Navigator>
-      </Container>
+        <StyleProvider style={getTheme(material)}>
+          <Container>
+            <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
+              <Tab.Screen
+                name="account"
+                component={AccountScreen}
+                options={{tabBarLabel: 'Carte'}}
+              />
+              <Tab.Screen
+                name="loan"
+                component={AccountDetail}
+                options={{
+                  tabBarLabel: 'Prêt',
+                  tabBarBadge: 2,
+                  tabBarIcon: <Icon name="book" />,
+                }}
+              />
+              <Tab.Screen
+                name="booking"
+                component={BookingScreen}
+                options={{tabBarLabel: 'Résa'}}
+              />
+            </Tab.Navigator>
+          </Container>
+        </StyleProvider>
       </Root>
     );
   }

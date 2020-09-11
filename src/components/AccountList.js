@@ -23,34 +23,11 @@ class AccountList extends Component {
             </ListItem>
           ))}
         </List>
-        <Button
-          onPress={() =>
-            this.props.addAccount({cardId: '965694', password: 'bati'})
-          }>
-          <Text>Add Account</Text>
-        </Button>
       </Container>
     );
   }
 }
 
-export function loginThunk(credentials) {
-  // Redux Thunk will inject dispatch here:
-  return (dispatch) => {
-    // Reducers may handle this to set a flag like isFetching
-    dispatch(fetchAccountPending(credentials.cardId));
-    // Perform the actual API call
-    return WS.login(credentials.cardId, credentials.password)
-      .then((accountData) => {
-        console.log('fetchAccountSuccess', accountData);
-        dispatch(fetchAccountSuccess(accountData));
-      })
-      .catch((error) => {
-        console.log('fetchAccountError', error);
-        dispatch(fetchAccountError(credentials.cardId, error));
-      });
-  };
-}
 
 const mapStateToProps = (state) => ({
   accounts: state.accounts,
@@ -58,8 +35,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addAccount: (credentials) => dispatch(loginThunk(credentials)),
-    deleteAccount: (cardId) => dispatch(deleteAccount(cardId)),
+    deleteAccount: (cardId) => dispatch(deleteAccount(cardId))
   };
 };
 
