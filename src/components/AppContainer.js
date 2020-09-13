@@ -20,18 +20,18 @@ import {
 } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
-import AccountList from '../components/AccountList';
-import AccountDetail from '../components/AccountDetail';
+import AccountListScreen from '../components/AccountListScreen';
+import AccountDetailScreen from '../components/AccountDetailScreen';
 import {connect} from 'react-redux';
 
-function LoanScreen() {
+function LoanTab() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Prêt</Text>
     </View>
   );
 }
-function BookingScreen() {
+function BookingTab() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Réservation</Text>
@@ -39,7 +39,7 @@ function BookingScreen() {
   );
 }
 
-function AccountScreen() {
+function AccountTab() {
   return (
     <>
       <Header>
@@ -54,7 +54,7 @@ function AccountScreen() {
         </Right>
       </Header>
       <Content>
-        <AccountList></AccountList>
+        <AccountListScreen></AccountListScreen>
       </Content>
     </>
   );
@@ -122,13 +122,13 @@ class AppContainer extends Component {
           <Container>
             <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
               <Tab.Screen
-                name="account"
-                component={AccountScreen}
+                name="accountList"
+                component={AccountTab}
                 options={{tabBarLabel: 'Carte'}}
               />
               <Tab.Screen
                 name="loan"
-                component={AccountDetail}
+                component={AccountDetailScreen}
                 options={{
                   tabBarLabel: 'Prêt',
                   tabBarBadge: 2,
@@ -137,7 +137,7 @@ class AppContainer extends Component {
               />
               <Tab.Screen
                 name="booking"
-                component={BookingScreen}
+                component={BookingTab}
                 options={{tabBarLabel: 'Résa'}}
               />
             </Tab.Navigator>

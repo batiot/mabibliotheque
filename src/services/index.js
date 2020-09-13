@@ -25,6 +25,7 @@ const login = async (cardId, password) => {
     }
     //Fill account
     let account = {};
+    account.password=password;
 
     // Get cookies for a url
     let cookies = await CookieManager.get(process.env.REACT_APP_URL_LOGIN);

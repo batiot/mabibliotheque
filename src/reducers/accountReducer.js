@@ -9,10 +9,10 @@ import {
 import produce from 'immer';
 
 const initialStateAccounts = {
-  '1': {cardId: '1', userName: 'david'},
-  '2': {cardId: '2', userName: 'lisa'},
-  '3': {cardId: '3', userName: 'charlie'},
-  '4': {cardId: '4', userName: 'émie'},
+  '111111': {cardId: '1111111', userName: 'Pierre'},
+  '222222': {cardId: '2222222', userName: 'Paul'},
+  '333333': {cardId: '333333', userName: 'Jacques'},
+  '444444': {cardId: '444444', userName: 'Bob'},
 };
 const example = {
   cardId: '18256',
@@ -47,9 +47,13 @@ export default function (state = initialStateAccounts, action) {
       });
     case FETCH_ACCOUNT_SUCCESS:
       return produce(state, (draftState) => {
-        //console.log(action.payload.cardId,draftState,draftState[action.payload.cardId] );
+        if(!draftState[action.payload.cardId]){
+          draftState[action.payload.cardId]={};
+        }
+        console.log(action.payload.cardId,draftState,draftState[action.payload.cardId] );
         draftState[action.payload.cardId].pending = false;
         draftState[action.payload.cardId].cardId = action.payload.cardId;
+        draftState[action.payload.cardId].password = action.payload.password;
         draftState[action.payload.cardId].cardStartDate =
           action.payload.cardStartDate;
         draftState[action.payload.cardId].userId = action.payload.userId;
