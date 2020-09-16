@@ -33,6 +33,10 @@ https://formik.org/docs/guides/react-native
 https://formik.org/docs/api/withFormik
 https://medium.com/@rossbulat/react-forms-with-formik-hocs-and-functional-components-df394afd2039
 
+Icone choice
+https://oblador.github.io/react-native-vector-icons/
+
+
 <View>
   <Item error={error && touched}>
     <Icon active name={input.name === "email" ? "person" : "unlock"} />

@@ -1,5 +1,18 @@
-import React, {Component} from 'react';
-import {Container, Button, Text, List, ListItem, Spinner} from 'native-base';
+import React from 'react';
+import {
+  Button,
+  Text,
+  List,
+  ListItem,
+  Body,
+  Right,
+  Icon,
+  Fab,
+  View,
+  Header,
+  Title,
+} from 'native-base';
+import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
 import {
   deleteAccount,
@@ -9,25 +22,45 @@ import {
 } from '../actions/accountAction';
 import {WS} from '../services';
 
-class AccountListScreen extends Component {
-  render() {
-    return (
-      <Container>
+function AccountListScreen({accounts, navigation, deleteAccount}) {
+  return (
+    <>
+      <Header>
+        <Body>
+          <Title>Liste des cartes</Title>
+        </Body>
+      </Header>
+      <View style={{flex: 1}}>
         <List>
-          {Object.values(this.props.accounts).map((account) => (
+          {Object.values(accounts).map((account) => (
             <ListItem key={account.cardId}>
-              <Text key={account.cardId}>{account.userName}</Text>
-              <Button onPress={() => this.props.deleteAccount(account.cardId)}>
-                <Text>Delete</Text>
-              </Button>
+              <Body>
+                <Text key={account.cardId}>
+                  {account.userName} - N°{account.cardId}
+                </Text>
+              </Body>
+              <Right>
+                <Button
+                  transparent
+                  onPress={() => deleteAccount(account.cardId)}>
+                  <Icon active type="FontAwesome5" name="trash-alt" />
+                </Button>
+              </Right>
             </ListItem>
           ))}
         </List>
-      </Container>
-    );
-  }
+        <Fab
+          active={true}
+          position="bottomRight"
+          onPress={() => navigation.navigate('AccountDetail')}
+          containerStyle={{}}
+          style={{backgroundColor: material.brandPrimary}}>
+          <Icon  type="FontAwesome5" name="plus" />
+        </Fab>
+      </View>
+    </>
+  );
 }
-
 
 function loginThunk(credentials) {
   // Redux Thunk will inject dispatch here:
@@ -47,14 +80,13 @@ function loginThunk(credentials) {
   };
 }
 
-
 const mapStateToProps = (state) => ({
   accounts: state.accounts,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteAccount: (cardId) => dispatch(deleteAccount(cardId))
+    deleteAccount: (cardId) => dispatch(deleteAccount(cardId)),
   };
 };
 

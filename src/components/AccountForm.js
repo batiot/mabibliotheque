@@ -7,9 +7,7 @@ import { useNavigation} from '@react-navigation/native';
 import material from '../../native-base-theme/variables/material';
 
 import {
-  fetchAccountPending,
   fetchAccountSuccess,
-  fetchAccountError,
 } from '../actions/accountAction';
 import {WS} from '../services';
 
@@ -74,8 +72,7 @@ const AccountForm = (props) => {
     handleBlur,
     handleSubmit,
     isSubmitting,
-    isValid,
-    resetForm
+    isValid
   } = props;
 
   return (
@@ -113,7 +110,7 @@ const AccountForm = (props) => {
         onPress={handleSubmit}
         disabled={isSubmitting || !isValid}>
         <Text>Ajouter</Text>
-        {isSubmitting && <Spinner />}
+        {isSubmitting && <Spinner color={material.brandPrimary}/>}
       </Button>
       <Text note style={{color: material.brandDanger}}>
         {errors.general}

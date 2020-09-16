@@ -21,7 +21,7 @@ const login = async (cardId, password) => {
     console.log(res.url, process.env.REACT_APP_URL_LOGIN);
     if (res.url == process.env.REACT_APP_URL_LOGIN) {
       // http://www.la-bibliotheque.com/espace-prive/ http://www.la-bibliotheque.com/votre-espace/
-      throw new Error('login failed');
+      throw new Error('Erreur de saisie, veuillez recommencer');
     }
     //Fill account
     let account = {};
