@@ -17,14 +17,11 @@ import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
 import AccountListScreen from '../components/AccountListScreen';
 import AccountDetailScreen from '../components/AccountDetailScreen';
+import LoanListScreen from '../components/LoanListScreen';
 import {connect} from 'react-redux';
 
 function LoanTab() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Prêt</Text>
-    </View>
-  );
+  return <LoanListScreen></LoanListScreen>;
 }
 function BookingTab() {
   return (
@@ -113,7 +110,7 @@ class AppContainer extends Component {
                 component={AccountTab}
                 options={{
                   tabBarLabel: 'Carte',
-                  tabBarIcon: <Icon active type="FontAwesome5" name="user"/>,
+                  tabBarIcon: <Icon active type="FontAwesome5" name="user" />,
                 }}
               />
               <Tab.Screen

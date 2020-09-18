@@ -62,24 +62,6 @@ function AccountListScreen({accounts, navigation, deleteAccount}) {
   );
 }
 
-function loginThunk(credentials) {
-  // Redux Thunk will inject dispatch here:
-  return (dispatch) => {
-    // Reducers may handle this to set a flag like isFetching
-    dispatch(fetchAccountPending(credentials.cardId));
-    // Perform the actual API call
-    return WS.login(credentials.cardId, credentials.password)
-      .then((accountData) => {
-        console.log('fetchAccountSuccess', accountData);
-        dispatch(fetchAccountSuccess(accountData));
-      })
-      .catch((error) => {
-        console.log('fetchAccountError', error);
-        dispatch(fetchAccountError(credentials.cardId, error));
-      });
-  };
-}
-
 const mapStateToProps = (state) => ({
   accounts: state.accounts,
 });

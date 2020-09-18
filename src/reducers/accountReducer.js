@@ -9,8 +9,8 @@ import {
 import produce from 'immer';
 
 const initialStateAccounts = {
-  '111111': {cardId: '1111111', userName: 'Pierre'},
-  '222222': {cardId: '2222222', userName: 'Paul'},
+  '111111': {cardId: '111111', userName: 'Pierre'},
+  '222222': {cardId: '222222', userName: 'Paul'},
   '333333': {cardId: '333333', userName: 'Jacques'},
   '444444': {cardId: '444444', userName: 'Bob'},
 };

@@ -63,10 +63,20 @@ const login = async (cardId, password) => {
   }
 };
 
-const fetchCurrentLoan = (urlLoan, account) => {
-  let queryLoan =
-    urlLoan + '?token=' + account.token + '&id_user=' + account.user_id;
-  let response = fetch(queryLoan, {
+const checkStatus =(response) =>{
+  if (response.ok) {
+    return response;
+  } else {
+    let error = new Error(response.statusText);
+    error.response = response;
+    throw error;
+  }
+};
+
+const fetchAccountLoans = async (account) => {
+  let queryLoan =  process.env.REACT_APP_URL_LOAN + '?token=' + account.token + '&id_user=' + account.userId;
+  //console.log(queryLoan);
+  let response = await fetch(queryLoan, {
     method: 'GET',
     headers: {
       Accept: '*/*',
@@ -75,10 +85,11 @@ const fetchCurrentLoan = (urlLoan, account) => {
       Referer: 'http://www.la-bibliotheque.com/espace-prive/',
     },
   });
-  //ApiUtils.checkStatus(response)
-  let responseJson = response.json();
+  checkStatus(response)
+  let responseJson = await response.json();
+  //console.log(responseJson);
   /*
-        Object {
+        Object {r
             "auteur": "Saint-Mars, Dominique de 1949-....",
             "datePret": "En prêt jusqu'au 31/10/2014",
             "editeur": "Calligram-C. Gallimard",
@@ -91,23 +102,59 @@ const fetchCurrentLoan = (urlLoan, account) => {
         },
         //<img src="http://www.la-bibliotheque.com/osiros/web/pictures/9/7/8/2/8/8/8/9782884803359FS.gif" width="250" alt="">
     */
-  let currentLoans = responseJson.map((obj) => {
+  let accountLoans = responseJson.map((obj) => {
     obj.isbn = obj.picture.substr(obj.picture.lastIndexOf('/') + 1, 13);
     obj.dateMax = obj.datePret.substr(-10);
-    obj.user_id = account.user_id;
+    obj.user_id = account.userId;
+    obj.cardId = account.cardId;
     return obj;
   });
-  /*
-    let currentLoansWithOsirosData = await Promise.all(currentLoans.map(loan=>{
-        return this.fetchNotice(loan.id).then((osirosData)=>{
-            loan.osirosData = osirosData
-            return loan
-        })
-    }));
-    */
+  let currentLoansWithOsirosData = await Promise.all(accountLoans.map(loan=>{
+      return fetchRemoteNotice(loan.id).then((osirosData)=>{
+          loan.osirosData = osirosData
+          return loan
+      })
+  }));
+  
   return currentLoansWithOsirosData;
 };
 
+const fetchRemoteNotice = async (idOsiros) =>{
+  let queryNotice = process.env.REACT_APP_URL_NOTICE  + idOsiros;
+  let response = await fetch(queryNotice, {
+          method: "GET",
+          headers: {
+              "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+              "Referer": "http://www.la-bibliotheque.com/espace-prive/"
+          }
+      })
+  checkStatus(response)
+  let bodyText = await response.text()
+
+  let isbn = bodyText.substr(bodyText.indexOf('BW_id_isbn') + 19, 13); //<input type="hidden" id="BW_id_isbn" value="9782884803359">
+  //Request URL: http://www.la-bibliotheque.com/recherche/resultat.php/?type_rech=rs&index%5B%5D=fulltext&bool%5B%5D=&reset=1&value%5B%5D=9782884803359
+  const reducer = (accumulator, currentValue) => {
+      let pos = currentValue.indexOf("\" content=")
+      let propName = currentValue.substring(currentValue.indexOf('=')+2,pos).replace('.','').replace(':','')
+      let propValue = currentValue.substring(pos+11,currentValue.length-3)
+      accumulator[propName] = propValue;
+      return accumulator
+  };
+  let osirosData ={'isbn':isbn}
+  let metas = bodyText
+      .match(/<meta (name|property)=(.*?)\/>/g)
+      .reduce(reducer,osirosData)
+  return osirosData
+
+};
+
+async function logout(urlLogin) {
+  //@GET("wp-login.php?action=logout&redirect_to=http%3A%2F%2Fwww.la-bibliotheque.com%2F&_wpnonce=8d6333638c")
+  //@GET("pret/logout.php")
+  //Observable<String> rxLogout();
+}
+
 export const WS = {
-  login,
+  login,fetchAccountLoans,fetchRemoteNotice
 };
