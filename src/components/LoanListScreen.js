@@ -10,7 +10,9 @@ import {
   Header,
   Title,
   Content,
+  Left,
 } from 'native-base';
+import FastImage from 'react-native-fast-image';
 import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
 import {
@@ -20,8 +22,21 @@ import {
 } from '../actions/loanAction';
 import {WS} from '../services';
 
-function TypeIcon(props) {
-  let typeToIconMap = {book: 'book',entry:'address-book',game:'gamepad'};
+const LoanPicture = (props) => (
+  <FastImage
+    style={{width: 50, height: 50}}
+    source={{
+      uri: props.url,
+      priority: FastImage.priority.normal,
+      cache: FastImage.cacheControl.immutable,
+    }}
+    resizeMode={FastImage.resizeMode.contain}
+  />
+  //          headers: { 'User-Agent':          USER_AGENT},
+);
+
+const TypeIcon = (props) => {
+  let typeToIconMap = {book: 'book', entry: 'address-book', game: 'gamepad'};
   let iconName = typeToIconMap[props.type];
   if (!iconName) iconName = 'question-circle';
   let color = material.brandPrimary;
@@ -36,7 +51,7 @@ function TypeIcon(props) {
   return (
     <Icon active type="FontAwesome5" name={iconName} style={{color: color}} />
   );
-}
+};
 
 function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
   return (
@@ -54,12 +69,19 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
       <Content>
         <List>
           {Object.values(loans).map((loan) => (
-            <ListItem key={loan.id}>
-              <TypeIcon type={loan.osirosData.DCType} dateMax={loan.dateMax} />
-              <Text key={loan.id}>
-                {' '}
-                {loan.titre}
-              </Text>
+            <ListItem key={loan.id} icon>
+              <Left>
+                <TypeIcon
+                  type={loan.osirosData.DCType}
+                  dateMax={loan.dateMax}
+                />
+              </Left>
+              <Body>
+                <Text key={loan.id}> {loan.titre}</Text>
+              </Body>
+              <Right>
+                <LoanPicture url={loan.picture} />
+              </Right>
             </ListItem>
           ))}
         </List>

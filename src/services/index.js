@@ -109,6 +109,7 @@ const fetchAccountLoans = async (account) => {
     const dateMaxString = obj.datePret.substr(-10);
     const [,day, month, year] = datePattern.exec(dateMaxString);
     obj.dateMax = new Date(year,month-1,day);
+    obj.picture  = process.env.REACT_APP_URL_PICTURE + obj.picture;
     obj.user_id = account.userId;
     obj.cardId = account.cardId;
     return obj;
