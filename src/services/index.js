@@ -1,5 +1,7 @@
 import CookieManager from '@react-native-community/cookies';
 
+const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
+
 const login = async (cardId, password) => {
   try {
     let clearCookieSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
@@ -10,7 +12,7 @@ const login = async (cardId, password) => {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         Accept:          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'User-Agent':          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+        'User-Agent':          USER_AGENT,
         Origin: 'http://www.la-bibliotheque.com',
         Referer: 'http://www.la-bibliotheque.com/votre-espace/',
       },
@@ -80,8 +82,7 @@ const fetchAccountLoans = async (account) => {
     method: 'GET',
     headers: {
       Accept: '*/*',
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+      'User-Agent': USER_AGENT,
       Referer: 'http://www.la-bibliotheque.com/espace-prive/',
     },
   });
@@ -102,30 +103,26 @@ const fetchAccountLoans = async (account) => {
         },
         //<img src="http://www.la-bibliotheque.com/osiros/web/pictures/9/7/8/2/8/8/8/9782884803359FS.gif" width="250" alt="">
     */
-  let accountLoans = responseJson.map((obj) => {
+  return responseJson.map((obj) => {
     obj.isbn = obj.picture.substr(obj.picture.lastIndexOf('/') + 1, 13);
-    obj.dateMax = obj.datePret.substr(-10);
+    const datePattern =  /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const dateMaxString = obj.datePret.substr(-10);
+    const [,day, month, year] = datePattern.exec(dateMaxString);
+    obj.dateMax = new Date(year,month-1,day);
     obj.user_id = account.userId;
     obj.cardId = account.cardId;
     return obj;
   });
-  let currentLoansWithOsirosData = await Promise.all(accountLoans.map(loan=>{
-      return fetchRemoteNotice(loan.id).then((osirosData)=>{
-          loan.osirosData = osirosData
-          return loan
-      })
-  }));
-  
-  return currentLoansWithOsirosData;
 };
 
 const fetchRemoteNotice = async (idOsiros) =>{
   let queryNotice = process.env.REACT_APP_URL_NOTICE  + idOsiros;
+  //console.log(queryNotice);
   let response = await fetch(queryNotice, {
           method: "GET",
           headers: {
               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+              "User-Agent": USER_AGENT,
               "Referer": "http://www.la-bibliotheque.com/espace-prive/"
           }
       })
@@ -148,6 +145,25 @@ const fetchRemoteNotice = async (idOsiros) =>{
   return osirosData
 
 };
+
+
+async function fetchNotice(idOsiros) {
+  //await AsyncStorage.clear();
+  let notice = await this.fetchLocalNotice(idOsiros);
+  if(!notice){
+      //No local data, pick remote one
+      notice = await this.fetchRemoteNotice(idOsiros)
+      await this.storeLocalNotice(idOsiros,notice) 
+  }
+  return notice;
+}
+async function fetchLocalNotice(idOsiros) {
+  let noticeString = await AsyncStorage.getItem(idOsiros.toString());
+  return noticeString ? JSON.parse(noticeString):noticeString;
+}
+async function storeLocalNotice(idOsiros,notice) {
+  return await AsyncStorage.setItem(idOsiros.toString(), JSON.stringify(notice));
+}
 
 async function logout(urlLogin) {
   //@GET("wp-login.php?action=logout&redirect_to=http%3A%2F%2Fwww.la-bibliotheque.com%2F&_wpnonce=8d6333638c")

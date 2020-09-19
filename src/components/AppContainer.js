@@ -26,7 +26,7 @@ function LoanTab() {
 function BookingTab() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Réservation</Text>
+      <Text>Bientôt, gérez ici vos réservations</Text>
     </View>
   );
 }
@@ -118,7 +118,6 @@ class AppContainer extends Component {
                 component={LoanTab}
                 options={{
                   tabBarLabel: 'Prêt',
-                  tabBarBadge: 2,
                   tabBarIcon: <Icon type="FontAwesome5" name="book-open" />,
                 }}
               />

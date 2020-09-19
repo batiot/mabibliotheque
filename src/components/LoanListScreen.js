@@ -7,10 +7,9 @@ import {
   Body,
   Right,
   Icon,
-  View,
   Header,
   Title,
-  Content
+  Content,
 } from 'native-base';
 import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
@@ -21,7 +20,25 @@ import {
 } from '../actions/loanAction';
 import {WS} from '../services';
 
-function LoanListScreen({loans, accounts,navigation, refreshLoans}) {
+function TypeIcon(props) {
+  let typeToIconMap = {book: 'book',entry:'address-book',game:'gamepad'};
+  let iconName = typeToIconMap[props.type];
+  if (!iconName) iconName = 'question-circle';
+  let color = material.brandPrimary;
+  let dayDiff = Math.round(
+    (props.dateMax - new Date()) / (1000 * 60 * 60 * 24),
+  );
+  if (dayDiff <= 0) {
+    color = material.brandDanger;
+  } else if (dayDiff <= 7) {
+    color = material.brandWarning;
+  }
+  return (
+    <Icon active type="FontAwesome5" name={iconName} style={{color: color}} />
+  );
+}
+
+function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
   return (
     <>
       <Header>
@@ -29,18 +46,20 @@ function LoanListScreen({loans, accounts,navigation, refreshLoans}) {
           <Title>Liste des Prêts</Title>
         </Body>
         <Right>
-                <Button
-                  transparent
-                  onPress={() => refreshLoans(accounts)}>
-                  <Icon active type="FontAwesome5" name="sync-alt" />
-                </Button>
-              </Right>
+          <Button transparent onPress={() => refreshLoans(accounts, loans)}>
+            <Icon active type="FontAwesome5" name="sync-alt" />
+          </Button>
+        </Right>
       </Header>
       <Content>
         <List>
           {Object.values(loans).map((loan) => (
             <ListItem key={loan.id}>
-                <Text key={loan.id}>{loan.titre}</Text>
+              <TypeIcon type={loan.osirosData.DCType} dateMax={loan.dateMax} />
+              <Text key={loan.id}>
+                {' '}
+                {loan.titre}
+              </Text>
             </ListItem>
           ))}
         </List>
@@ -49,23 +68,35 @@ function LoanListScreen({loans, accounts,navigation, refreshLoans}) {
   );
 }
 
-function fetchLoansThunk(accounts) {
+function fetchLoansThunk(accounts, existingLoans) {
   // Redux Thunk will inject dispatch here:
-  return (dispatch) => {
+  return async (dispatch) => {
     // Reducers may handle this to set a flag like isFetching
     //dispatch(fetchLoanPending('1000'));
+    try {
+      let cardId = '965694';
+      //Perform the actual API call
+      let newLoanList = await WS.fetchAccountLoans(accounts[cardId]);
+      //console.log('fetchLoanSuccess', newLoanList);
 
-    let cardId= '965694';
-    //Perform the actual API call
-    return WS.fetchAccountLoans(accounts[cardId])
-      .then((loanList) => {
-        //console.log('fetchLoanSuccess', loanList);
-        return dispatch(fetchLoanSuccess(cardId,loanList));
-      })
-      .catch((error) => {
-        console.log('fetchLoanError', error);
-        //dispatch(fetchLoanError('1000', error));
-      });
+      //On fait les appel en sequentiel pour ne pas surcharger le serveur
+      for (let newLoan of newLoanList) {
+        let osirosData = existingLoans
+          .filter((loan) => (loan.id = newLoan.id))
+          .map((loan) => loan.osirosData)
+          .shift();
+        if (!osirosData) {
+          //appel distant que si on a pas déja l'info
+          osirosData = await WS.fetchRemoteNotice(newLoan.id);
+        }
+        newLoan.osirosData = osirosData;
+      }
+      //newLoanList = [];
+      return dispatch(fetchLoanSuccess(cardId, newLoanList));
+    } catch (error) {
+      console.log('fetchLoanError', error);
+      //dispatch(fetchLoanError('1000', error));
+    }
   };
 }
 
@@ -76,7 +107,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    refreshLoans: (accounts) => dispatch(fetchLoansThunk(accounts)),
+    refreshLoans: (accounts, loans) =>
+      dispatch(fetchLoansThunk(accounts, loans)),
   };
 };
 

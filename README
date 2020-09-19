@@ -36,6 +36,10 @@ https://medium.com/@rossbulat/react-forms-with-formik-hocs-and-functional-compon
 Icone choice
 https://oblador.github.io/react-native-vector-icons/
 
+Cache
+https://react-native-community.github.io/async-storage/docs/usage
+https://github.com/DylanVann/react-native-fast-image
+
 
 <View>
   <Item error={error && touched}>

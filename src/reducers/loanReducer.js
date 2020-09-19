@@ -93,6 +93,7 @@ export default function (state = initialStateLoans, action) {
         }, []
       );
       newState.push(...newLoanList);//Les nouveau prêt
+      //console.log(newState);
       return newState;
 
     /**
