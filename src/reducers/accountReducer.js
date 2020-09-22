@@ -57,8 +57,8 @@ export default function (state = initialStateAccounts, action) {
         draftState[action.payload.cardId].cardStartDate =
           action.payload.cardStartDate;
         draftState[action.payload.cardId].userId = action.payload.userId;
-        draftState[action.payload.cardId].token = action.payload.token;
         draftState[action.payload.cardId].userName = action.payload.userName;
+        draftState[action.payload.cardId].token = action.payload.token;
         draftState[action.payload.cardId].cookie = action.payload.cookie;
         draftState[action.payload.cardId].error = null;
       });

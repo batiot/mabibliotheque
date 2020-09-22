@@ -126,6 +126,7 @@ function loginThunk(credentials) {
     return WS.login(credentials.cardId, credentials.password).then(
       (accountData) => {
         console.log('fetchAccountSuccess', accountData);
+        //TODO also refresh loan & reservation
         return dispatch(fetchAccountSuccess(accountData));
       },
     );

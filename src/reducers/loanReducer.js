@@ -25,7 +25,7 @@ const example = {
   resume: '',
   titre: 'Lili part en camp de vacances',
   user_id: '1111',
-  osirosData: {
+  notice: {
     DCContributor: 'Bloch, Serge',
     DCCreator: 'Saint-Mars, Dominique de',
     DCDate: 'cop. 2007',
@@ -54,6 +54,10 @@ const example = {
     twitterimage:
       'http://www.la-bibliotheque.com/osiros/web/pictures/9/7/8/2/8/8/8/9782884803359FS.gif',
     twittertitle: 'Lili part en camp de vacances',
+    numColl:'12',
+    section:'Jeunesse',
+    emplacement:'ALBUMS',
+    typeDocument:'Livre'
   },
 };
 export default function (state = initialStateLoans, action) {
@@ -94,6 +98,18 @@ export default function (state = initialStateLoans, action) {
       );
       newState.push(...newLoanList);//Les nouveau prêt
       //console.log(newState);
+      newState.sort((a, b) => {
+        let titreA = a.titre.toLowerCase();
+        let titreB = b.titre.toLowerCase();
+        if (titreA > titreB) {
+          return 1;
+        }
+        if (titreB > titreA) {
+          return -1;
+        }
+        return 0;
+      });
+
       return newState;
 
     /**

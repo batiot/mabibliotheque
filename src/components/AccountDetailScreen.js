@@ -19,7 +19,7 @@ function AccountDetailScreen({navigation}) {
       <Header>
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
-            <Icon active type="FontAwesome5" name="backspace" />
+            <Icon active type="FontAwesome5" name="chevron-left" />
           </Button>
         </Left>
         <Body>

@@ -40,6 +40,11 @@ Cache
 https://react-native-community.github.io/async-storage/docs/usage
 https://github.com/DylanVann/react-native-fast-image
 
+Date
+https://github.com/you-dont-need/You-Dont-Need-Momentjs
+
+Barcode with mask
+https://github.com/react-native-community/react-native-camera/blob/master/docs/RNCamera.md#subviews
 
 <View>
   <Item error={error && touched}>

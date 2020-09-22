@@ -31,12 +31,15 @@ function AccountListScreen({accounts, navigation, deleteAccount}) {
         </Body>
       </Header>
       <View style={{flex: 1}}>
-        <List>
+        <List selected>
           {Object.values(accounts).map((account) => (
             <ListItem key={account.cardId}>
               <Body>
-                <Text key={account.cardId}>
+                <Text>
                   {account.userName} - N°{account.cardId}
+                </Text>
+                <Text note>
+                  {account.cardStartDate}
                 </Text>
               </Body>
               <Right>
@@ -69,6 +72,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     deleteAccount: (cardId) => dispatch(deleteAccount(cardId)),
+    //TODO also delete loan and reservation
   };
 };
 

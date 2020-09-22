@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
+import {CommonActions} from '@react-navigation/native';
 import {
   Container,
   Footer,
@@ -18,10 +19,20 @@ import material from '../../native-base-theme/variables/material';
 import AccountListScreen from '../components/AccountListScreen';
 import AccountDetailScreen from '../components/AccountDetailScreen';
 import LoanListScreen from '../components/LoanListScreen';
+import LoanDetailScreen from '../components/LoanDetailScreen';
 import {connect} from 'react-redux';
 
 function LoanTab() {
-  return <LoanListScreen></LoanListScreen>;
+  const Stack = createStackNavigator();
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen name="LoanList" component={LoanListScreen} />
+      <Stack.Screen name="LoanDetail" component={LoanDetailScreen} />
+    </Stack.Navigator>
+  );
 }
 function BookingTab() {
   return (
@@ -63,6 +74,11 @@ function MyTabBar({state, descriptors, navigation}) {
             });
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name);
+              //navigation.dispatch(state => {
+              //console.log('tab', route.name, state);
+              //  return CommonActions.navigate({name: route.name});
+              //return CommonActions.reset({});
+              //});
             }
           };
 
@@ -86,7 +102,7 @@ function MyTabBar({state, descriptors, navigation}) {
                   <Text>{options.tabBarBadge}</Text>
                 </Badge>
               ) : null}
-              {options.tabBarIcon ? options.tabBarIcon : null}
+              {options.tabBarIcon ? options.tabBarIcon(isFocused) : null}
               <Text>{options.tabBarLabel}</Text>
             </Button>
           );
@@ -104,13 +120,23 @@ class AppContainer extends Component {
       <Root>
         <StyleProvider style={getTheme(material)}>
           <Container>
-            <Tab.Navigator tabBar={(props) => <MyTabBar {...props} />}>
+            <Tab.Navigator
+              tabBar={(props) => <MyTabBar {...props} />}
+              initialRouteName="accountTab">
               <Tab.Screen
                 name="accountTab"
                 component={AccountTab}
                 options={{
                   tabBarLabel: 'Carte',
-                  tabBarIcon: <Icon active type="FontAwesome5" name="user" />,
+                  tabBarIcon: (isFocused) => {
+                    return (
+                      <Icon
+                        active={isFocused}
+                        type="FontAwesome5"
+                        name="user"
+                      />
+                    );
+                  },
                 }}
               />
               <Tab.Screen
@@ -118,7 +144,15 @@ class AppContainer extends Component {
                 component={LoanTab}
                 options={{
                   tabBarLabel: 'Prêt',
-                  tabBarIcon: <Icon type="FontAwesome5" name="book-open" />,
+                  tabBarIcon: (isFocused) => {
+                    return (
+                      <Icon
+                        active={isFocused}
+                        type="FontAwesome5"
+                        name="book-open"
+                      />
+                    );
+                  },
                 }}
               />
               <Tab.Screen
@@ -126,7 +160,15 @@ class AppContainer extends Component {
                 component={BookingTab}
                 options={{
                   tabBarLabel: 'Résa',
-                  tabBarIcon: <Icon type="FontAwesome5" name="bookmark" />,
+                  tabBarIcon: (isFocused) => {
+                    return (
+                      <Icon
+                        active={isFocused}
+                        type="FontAwesome5"
+                        name="bookmark"
+                      />
+                    );
+                  },
                 }}
               />
             </Tab.Navigator>
@@ -136,7 +178,6 @@ class AppContainer extends Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => {
