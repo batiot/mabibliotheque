@@ -1,14 +1,22 @@
 import React from 'react';
 import {withFormik} from 'formik';
 import {connect} from 'react-redux';
-import {Item, Label, Input, Form, Button, Text, Spinner,Toast} from 'native-base';
-import { useNavigation} from '@react-navigation/native';
+import {
+  Item,
+  Label,
+  Input,
+  Form,
+  Button,
+  Text,
+  Spinner,
+  Toast,
+} from 'native-base';
+import {useNavigation} from '@react-navigation/native';
 
 import material from '../../native-base-theme/variables/material';
 
-import {
-  fetchAccountSuccess,
-} from '../actions/accountAction';
+import {fetchAccountSuccess} from '../actions/accountAction';
+import {fetchLoanByAccount} from '../actions/loanAction';
 import {WS} from '../services';
 
 const formikConfig = {
@@ -36,30 +44,28 @@ const formikConfig = {
     //await new Promise((r) => setTimeout(r, 500));
     //alert(JSON.stringify(values, null, 2));
     values.password = values.password.toLowerCase();
-    await props
-      .addAccount(values)
-      .then((newAccount) => {
-        //console.log('addAccount success', newAccount);
-        const triggerPostToastClosed = ()=>{}
-        const onToastClosed = new Promise(triggerPostToastClosed);
-        Toast.show({
-          type: 'success',
-          text: 'Carte ajoutée!',
-          buttonText: 'Ok',
-          onClose: () => {
-            props.navigation.goBack();
-            triggerPostToastClosed();
-            setSubmitting(false);
-          },
-        });
-        //return promise resolved only when taost is closed, otherwise setSubmitting go to false
-        return onToastClosed;
-      })
-      .catch((error) => {
-        //console.log('addAccount error', error.message);
-        setFieldError('general',error.message);
-        setSubmitting(false);
+    try{
+      let newAccount = await props.addAccount(values,props.loans);
+      //console.log('addAccount success', newAccount);
+      const triggerPostToastClosed = () => {};
+      const onToastClosed = new Promise(triggerPostToastClosed);
+      Toast.show({
+        type: 'success',
+        text: 'Carte ajoutée!',
+        buttonText: 'Ok',
+        onClose: () => {
+          props.navigation.goBack();
+          triggerPostToastClosed();
+          setSubmitting(false);
+        },
       });
+      //return promise resolved only when taost is closed, otherwise setSubmitting go to false
+      return onToastClosed;  
+    }catch(error){
+      console.log('addAccount error', error.message);
+      setFieldError('general', error.message);
+      setSubmitting(false);
+    }
   },
 };
 
@@ -72,7 +78,7 @@ const AccountForm = (props) => {
     handleBlur,
     handleSubmit,
     isSubmitting,
-    isValid
+    isValid,
   } = props;
 
   return (
@@ -110,7 +116,7 @@ const AccountForm = (props) => {
         onPress={handleSubmit}
         disabled={isSubmitting || !isValid}>
         <Text>Ajouter</Text>
-        {isSubmitting && <Spinner color={material.brandPrimary}/>}
+        {isSubmitting && <Spinner color={material.brandPrimary} />}
       </Button>
       <Text note style={{color: material.brandDanger}}>
         {errors.general}
@@ -119,30 +125,30 @@ const AccountForm = (props) => {
   );
 };
 
-function loginThunk(credentials) {
+function loginThunk(credentials,existingLoans) {
   // Redux Thunk will inject dispatch here:
-  return (dispatch) => {
+  return async (dispatch) => {
     // Perform the actual API call
-    return WS.login(credentials.cardId, credentials.password).then(
-      (accountData) => {
-        console.log('fetchAccountSuccess', accountData);
-        //TODO also refresh loan & reservation
-        return dispatch(fetchAccountSuccess(accountData));
-      },
-    );
+    let accountData = await WS.login(credentials.cardId, credentials.password);
+    //console.log('fetchAccountSuccess', accountData);
+    return await Promise.all([
+     await  dispatch(fetchAccountSuccess(accountData)),
+     await fetchLoanByAccount(dispatch, accountData,existingLoans)
+      //TODO also get & reservation
+    ]);
   };
 }
 
 const mapStateToProps = (state) => ({
   accounts: state.accounts,
+  loans: state.loans,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addAccount: (credentials) => dispatch(loginThunk(credentials)),
+    addAccount: (credentials,loans) => dispatch(loginThunk(credentials,loans)),
   };
 };
-
 
 //withNavigation no more exist in react navigation
 const withNavigation = (Component) => {

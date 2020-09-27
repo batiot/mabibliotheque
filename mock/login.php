@@ -78,10 +78,10 @@
             if (isset($_POST['log']) && !empty($_POST['log']) 
                && !empty($_POST['pwd'])) {
 				
-               if ($_POST['login'] == 'aloes' && $_POST['log'] == '123456'&& $_POST['pwd'] == 'abcd'&& $_POST['wp-submit'] == 'Se connecter') {
+               if ($_POST['login'] == 'aloes' && $_POST['pwd'] == 'abcd' && $_POST['wp-submit'] == 'Se connecter') {
                   	$_SESSION['valid'] = true;
                   	$_SESSION['timeout'] = time();
-                  	$_SESSION['username'] = '123456';
+                  	$_SESSION['username'] = $_POST['log'];
 			setcookie("wordpress_test_cookie","WP+Cookie+check");
 			setcookie("wordpress_logged_in_e1bff3392ed053227292beec49c22dd8","971650%7C1482603562%7Cp6jrS7PG3XErLp7E2kTUjbFh8dlpMmrDE7dJdMxoV2F%7C873419b7c4d52ec1383617c97318b8f6e14c7c2fe6b4eb0125a3a6828d533b4e");
 			header("Location: ./accueil.php", true, 302);

@@ -9,10 +9,10 @@ import {
 import produce from 'immer';
 
 const initialStateAccounts = {
-  '111111': {cardId: '111111', userName: 'Pierre'},
-  '222222': {cardId: '222222', userName: 'Paul'},
-  '333333': {cardId: '333333', userName: 'Jacques'},
-  '444444': {cardId: '444444', userName: 'Bob'},
+  '111111': {cardId: '111111', userName: 'Pierre', userId:'11'},
+  '222222': {cardId: '222222', userName: 'Paul', userId:'22'},
+  '333333': {cardId: '333333', userName: 'Jacques', userId:'33'},
+  '444444': {cardId: '444444', userName: 'Bob', userId:'44'},
 };
 const example = {
   cardId: '18256',
@@ -50,7 +50,7 @@ export default function (state = initialStateAccounts, action) {
         if(!draftState[action.payload.cardId]){
           draftState[action.payload.cardId]={};
         }
-        console.log(action.payload.cardId,draftState,draftState[action.payload.cardId] );
+        //console.log(action.payload.cardId,draftState,draftState[action.payload.cardId] );
         draftState[action.payload.cardId].pending = false;
         draftState[action.payload.cardId].cardId = action.payload.cardId;
         draftState[action.payload.cardId].password = action.payload.password;

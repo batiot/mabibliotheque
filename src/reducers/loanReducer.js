@@ -60,10 +60,10 @@ const example = {
     typeDocument:'Livre'
   },
 };
-export default function (state = initialStateLoans, action) {
+export default function (baseState = initialStateLoans, action) {
   switch (action.type) {
     case FETCH_LOAN_PENDING:
-      return produce(state, (draftState) => {
+      return produce(baseState, (draftState) => {
         //on passe tous les anciens pret de la carte a pending = true;
         draftState
           .filter((loan) => {
@@ -72,85 +72,50 @@ export default function (state = initialStateLoans, action) {
           .forEach((loan) => {
             loan.pending = true;
           });
-        console.log('pending', draftState);
       });
     case FETCH_LOAN_SUCCESS:
-      let newLoanList = action.payload.loanList;
-      let currentCardId = action.payload.cardId;
-      let newState = state.reduce(
-        (accumulateur, valeurCourante, index, array) => {
-          if (valeurCourante.cardId == currentCardId) {
+      return produce(baseState, (draftState) => {
+        let newLoanList = action.payload.loanList;
+        let currentCardId = action.payload.cardId;
+
+        //use a reverse for-loop:
+        for (index = draftState.length - 1; index >= 0; index -= 1) {
+          if(draftState[index].cardId == currentCardId){
+            //Pour ceux de cette carte
+            draftState[index].pending = false;
+            draftState[index].error = null;
             let matchedNewLoan = newLoanList.filter(
-              (newLoan) => newLoan.id == valeurCourante.id,
+              (newLoan) => newLoan.id == draftState[index].id,
             )[0];
             //Si present dans la nouvelle liste de prêt, on le mets a jour
             if (matchedNewLoan) {
-              accumulateur.push({...valeurCourante, ...matchedNewLoan});
-              //On le supprime de la nouvelle liste car son cas est traité
+              draftState[index].dateMax = matchedNewLoan.dateMax;
+              draftState[index].idProlong = matchedNewLoan.idProlong;
+              //On le supprime de newLoanList car son cas est traité
               let newLoanIndex = newLoanList.indexOf(matchedNewLoan);
               newLoanList.splice(newLoanIndex, 1);
-            }
-          } else {
-            accumulateur.push(valeurCourante); //On touche pas au pret des autres cartes
-          }
-          return accumulateur;
-        }, []
-      );
-      newState.push(...newLoanList);//Les nouveau prêt
-      //console.log(newState);
-      newState.sort((a, b) => {
-        let titreA = a.titre.toLowerCase();
-        let titreB = b.titre.toLowerCase();
-        if (titreA > titreB) {
-          return 1;
-        }
-        if (titreB > titreA) {
-          return -1;
-        }
-        return 0;
-      });
-
-      return newState;
-
-    /**
-      newState.push(...newLoanList);
-      return newState;
-
-      return produce(state, (draftState) => {
-        let newLoanList = [];//action.payload.loanList;
-        let currentCardId = action.payload.cardId;
-        //console.log('draftState',draftState);
-        //on passe tous les anciens pret de la carte a pending = false;
-        draftState
-          //.filter((draftLoan) => draftLoan.cardId == currentCardId)
-          .forEach(function (draftLoan, index, draftLoanList) {
-            if (draftLoan.cardId == currentCardId) {
-              //Pour ceux de cette carte
-              draftLoan.pending = false;
-              draftLoan.error = null;
-              //On cherche un pret avec le même id
-              //action.payload.loanList
-              let matchedNewLoan = newLoanList.filter(
-                (newLoan) => newLoan.id == draftLoan.id,
-              )[0];
-              //Si present dans la nouvelle liste de prêt, on le mets a jour
-              if (matchedNewLoan) {
-                draftLoan = {...draftLoan, ...matchedNewLoan};
-                //On le supprime car son cas est traité
-                let newLoanIndex = newLoanList.indexOf(matchedNewLoan);
-                newLoanList.splice(newLoanIndex, 1);
-              } else {
+            }else{
                 //Si pas présent dans la nouvelle liste, ont le supprime
+                //delete draftState[index];
                 draftState.splice(index, 1);
-              }
             }
-            //draftState.splice(index, 1);
-          });
-        //On ajoute les prêt qui n'était pas déja la
-        draftState.push(...newLoanList);
-      }); */
+          }
+        }
+        draftState.push(...newLoanList);//Les nouveau prêt;
+        draftState.sort((a, b) => {
+          let titreA = a.titre.toLowerCase();
+          let titreB = b.titre.toLowerCase();
+          if (titreA > titreB) {
+            return 1;
+          }
+          if (titreB > titreA) {
+            return -1;
+          }
+          return 0;
+        });
+      });
     case FETCH_LOAN_ERROR:
-      return produce(state, (draftState) => {
+      return produce(baseState, (draftState) => {
         //on passe tous les anciens pret de la carte a pending = false;
         draftState
           .filter((loan) => {
@@ -162,7 +127,7 @@ export default function (state = initialStateLoans, action) {
           });
       });
     default: {
-      return state;
+      return baseState;
     }
   }
 }

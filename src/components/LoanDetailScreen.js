@@ -15,6 +15,13 @@ import {
 import FastImage from 'react-native-fast-image';
 import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
+import {WS} from '../services';
+import {
+  fetchLoanPending,
+  fetchLoanSuccess,
+  fetchLoanError,
+  fetchLoanByAccount
+} from '../actions/loanAction';
 
 const LoanPicture = (props) => (
   <FastImage
@@ -29,7 +36,7 @@ const LoanPicture = (props) => (
   //          headers: { 'User-Agent':          USER_AGENT},
 );
 
-function LoanDetailScreen({route, loans, accounts, navigation}) {
+function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
   const currLoanId = route.params.loanId;
   const currLoan = loans.filter((loan) => loan.id == currLoanId).shift();
 
@@ -83,10 +90,8 @@ function LoanDetailScreen({route, loans, accounts, navigation}) {
             </Body>
           </CardItem>
           <CardItem footer bordered>
-            <Text>Prêt jusqu'au {currDateLabel}  </Text>
-            <Button>
-              <Text>Prolonger</Text>
-            </Button>
+            <Text>Prêt jusqu'au {currDateLabel}   </Text>
+            {currLoan.idProlong?(<Button  disabled={currLoan.pending} onPress={() => prolongation(currLoan.idProlong,accounts[currLoan.cardId],loans)}><Text>Prolonger</Text></Button>):null}
           </CardItem>
         </Card>
       </Content>
@@ -94,13 +99,27 @@ function LoanDetailScreen({route, loans, accounts, navigation}) {
   );
 }
 
+function prolongationThunk(idProlong,account, existingLoans) {
+  // Redux Thunk will inject dispatch here:
+  return async (dispatch) => {
+    // Perform the actual API call
+    let prolongationSuccess = await WS.prolongation(idProlong);
+    //console.log('prolongationSuccess', prolongationSuccess);
+    return await fetchLoanByAccount(dispatch, account,existingLoans);
+  };
+}
+
+
+
 const mapStateToProps = (state) => ({
   loans: state.loans,
   accounts: state.accounts,
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    prolongation: (idProlong,account, loans) => dispatch(prolongationThunk(idProlong,account, loans)),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoanDetailScreen);

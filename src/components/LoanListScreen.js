@@ -20,6 +20,7 @@ import {
   fetchLoanPending,
   fetchLoanSuccess,
   fetchLoanError,
+  fetchLoanByAccount
 } from '../actions/loanAction';
 import {WS} from '../services';
 
@@ -90,7 +91,7 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
         </Right>
       </Header>
       <Content>
-        <List>
+      <List>
           {Object.values(loans).map((loan) => (
             <ListItem key={loan.id} thumbnail onPress={() =>
               navigation.navigate('LoanDetail', {loanId: loan.id})
@@ -116,43 +117,11 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
 function fetchLoansThunk(accounts, existingLoans) {
   // Redux Thunk will inject dispatch here:
   return async (dispatch) => {
-    // Reducers may handle this to set a flag like isFetching
-    //dispatch(fetchLoanPending('1000'));
-    let cardId = Object.keys(accounts)[0];
     //Pour chaque account
     for (let cardId of  Object.keys(accounts)) {
-      //ouverture d"une session si besoin
-      if(false){
-        accounts[cardId]
-      }
       await fetchLoanByAccount(dispatch, accounts[cardId],existingLoans);
     }
   };
-}
-
-const fetchLoanByAccount = async (dispatch,account,existingLoans) => {
-  try {
-    //Perform the actual API call
-    let newLoanList = await WS.fetchAccountLoans(account);
-    //On fait les appel en sequentiel pour ne pas surcharger le serveur
-    for (let newLoan of newLoanList) {
-      let notice = existingLoans
-        .filter((loan) => (loan.id = newLoan.id))
-        .map((loan) => loan.notice)
-        .shift();
-      if (!notice) {
-        //appel distant que si on a pas déja l'info
-        notice = await WS.fetchRemoteNotice(newLoan.id);
-      }
-      newLoan.notice = notice;
-    }
-    //newLoanList = [];
-    return dispatch(fetchLoanSuccess(account.cardId, newLoanList));
-  } catch (error) {
-    console.log('fetchLoanError', error);
-    //dispatch(fetchLoanError('1000', error));
-  }
-
 }
 
 const mapStateToProps = (state) => ({

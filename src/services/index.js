@@ -5,8 +5,8 @@ const USER_AGENT =
 
 const login = async (cardId, password) => {
   try {
-    let clearCookieSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
-    console.log('CookieManager.clearAll =>', clearCookieSuccess);
+    let clearCookieBeforeSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
+    //console.log('CookieManager.clearAll =>', clearCookieBeforeSuccess);
 
     let res = await fetch(process.env.REACT_APP_URL_LOGIN, {
       method: 'POST',
@@ -26,8 +26,8 @@ const login = async (cardId, password) => {
         '&wp-submit=Se connecter&redirect_to=http://www.la-bibliotheque.com/espace-prive',
     });
 
-    console.log(res.headers.get('content-type'));
-    console.log(res.url, process.env.REACT_APP_URL_LOGIN);
+    //console.log(res.headers.get('content-type'));
+    //console.log(res.url, process.env.REACT_APP_URL_LOGIN);
     if (res.url == process.env.REACT_APP_URL_LOGIN) {
       // http://www.la-bibliotheque.com/espace-prive/ http://www.la-bibliotheque.com/votre-espace/
       throw new Error('Erreur de saisie, veuillez recommencer');
@@ -44,9 +44,11 @@ const login = async (cardId, password) => {
         obj[key] = cookies[key];
         return obj;
       }, {});
-    console.log('CookieManager.get =>', cookies);
-    console.log('CookieManager.get =>', phpSessionId);
+    //console.log('CookieManager.get =>', cookies);
+    //console.log('CookieManager.get =>', phpSessionId);
     account.cookie = phpSessionId;
+    //Une fois le cookie utile sauvegardé, on vide les cookie
+    let clearCookieAfterSuccess = await CookieManager.clearAll(); 
 
     //else successful login redirect to another url
     let bodyText = await res.text();
@@ -100,9 +102,9 @@ const fetchAccountLoans = async (account) => {
 
   try {
     let clearCookieSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
-    console.log("account.cookie",account.cookie["PHPSESSID"]);
-    let setCookieSuccess = await CookieManager.set('http://ovh.batiot.com',account.cookie["PHPSESSID"]);
     //mais au final, il n'y en pas besoin car le ws utilise seulement le token en param
+    //console.log("account.cookie",account.cookie["PHPSESSID"]);
+    //let setCookieSuccess = await CookieManager.set('http://ovh.batiot.com',account.cookie["PHPSESSID"]);
     let response = await fetch(queryLoan, {
       method: 'GET',
       headers: {
@@ -113,7 +115,7 @@ const fetchAccountLoans = async (account) => {
     });
     checkStatus(response);
     let responseJson = await response.json();
-    console.log(responseJson);
+    //console.log('responseJson'+responseJson);
     /*
           Object {r
               "auteur": "Saint-Mars, Dominique de 1949-....",
@@ -121,6 +123,7 @@ const fetchAccountLoans = async (account) => {
               "editeur": "Calligram-C. Gallimard",
               "id": 98700,
               "linkProlongation": "<a class=\"lien-prolongation\" href=\"/osiros/web/aloes_prolongation.php?idProlong=6341790&ajax=1\"><b>Prolongation</b></a>",
+              "linkProlongation":""
               "permalien": "http://www.la-bibliotheque.com/recherche/notice.php?queryosiros=id:o98700",
               "picture": "/osiros/web/pictures/9/7/8/2/8/8/8/9782884803359FS.gif",
               "resume": "",
@@ -130,13 +133,19 @@ const fetchAccountLoans = async (account) => {
       */
     return responseJson.map((obj) => {
       obj.isbn = obj.picture.substr(obj.picture.lastIndexOf('/') + 1, 13);
-      const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      const datePattern = /(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
       const dateMaxString = obj.datePret.substr(-10);
       const [, day, month, year] = datePattern.exec(dateMaxString);
       obj.dateMax = new Date(year, month - 1, day).toString();
       obj.picture = process.env.REACT_APP_URL_PICTURE + obj.picture;
       obj.user_id = account.userId;
       obj.cardId = account.cardId;
+      let idProlong = obj.linkProlongation.match(/idProlong=(\d*?)&ajax/);
+      if (idProlong){
+        obj.idProlong = idProlong[1]
+      }else{
+        obj.idProlong=null;
+      }
       return obj;
     });
   } catch (error) {
@@ -148,6 +157,8 @@ const fetchAccountLoans = async (account) => {
 const fetchRemoteNotice = async (idOsiros) => {
   let queryNotice = process.env.REACT_APP_URL_NOTICE + idOsiros;
   //console.log(queryNotice);
+  //les notices sont en public
+  //let clearCookieSuccess = await CookieManager.clearAll(); 
   let response = await fetch(queryNotice, {
     method: 'GET',
     headers: {
@@ -253,6 +264,26 @@ async function storeLocalNotice(idOsiros, notice) {
   );
 }
 
+async function prolongation(idProlong) {
+  let queryProlongation = process.env.REACT_APP_URL_PROLONGATION + idProlong;
+  //console.log(queryProlongation);
+    //let clearCookieSuccess = await CookieManager.clearAll(); 
+  //mais au final, il n'y en pas besoin car le ws utilise seulement le token en param
+  let response = await fetch(queryProlongation, {
+    method: 'GET',
+    headers: {
+      Accept:'*/*',
+      'User-Agent': USER_AGENT,
+      Referer: 'http://www.la-bibliotheque.com/espace-prive/#section_prets_en_cours',
+    },
+  });
+  checkStatus(response);
+  let responseJson = await response.json();
+  console.log(responseJson);//{"ALOES_MSG":"OK, 1 prolongation(s) effectu\u00e9e(s)."} {"ALOES_MSG":"Aucune prolongation effectu\u00e9e !"}
+  return (responseJson.ALOES_MSG == "OK, 1 prolongation(s) effectu\u00e9e(s).");
+}
+
+
 async function logout(urlLogin) {
   //@GET("wp-login.php?action=logout&redirect_to=http%3A%2F%2Fwww.la-bibliotheque.com%2F&_wpnonce=8d6333638c")
   //@GET("pret/logout.php")
@@ -263,4 +294,5 @@ export const WS = {
   login,
   fetchAccountLoans,
   fetchRemoteNotice,
+  prolongation
 };

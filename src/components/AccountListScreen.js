@@ -20,6 +20,11 @@ import {
   fetchAccountSuccess,
   fetchAccountError,
 } from '../actions/accountAction';
+import {
+  fetchLoanPending,
+  fetchLoanSuccess,
+  fetchLoanError,
+} from '../actions/loanAction';
 import {WS} from '../services';
 
 function AccountListScreen({accounts, navigation, deleteAccount}) {
@@ -65,14 +70,24 @@ function AccountListScreen({accounts, navigation, deleteAccount}) {
   );
 }
 
+function deleteThunk(cardId) {
+  // Redux Thunk will inject dispatch here:
+  return async (dispatch) => {
+    return await Promise.all([
+      dispatch(deleteAccount(cardId)),
+      dispatch(fetchLoanSuccess(cardId, []))
+      //delete aussi les reservations
+    ]);
+  };
+}
+
 const mapStateToProps = (state) => ({
   accounts: state.accounts,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    deleteAccount: (cardId) => dispatch(deleteAccount(cardId)),
-    //TODO also delete loan and reservation
+    deleteAccount: (cardId) => dispatch(deleteThunk(cardId))
   };
 };
 
