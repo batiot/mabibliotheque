@@ -6,7 +6,7 @@
 
 	  <input type="hidden" name="user_id" value="<?php echo $_SESSION["username"]?>"/>
      <section id="section_infos_emprunteur" class="section_prets" style="background-color:white; ">
-     <h1 class="SQtitle2 SQblack">Mes informations</h1><br><br>
+     <h1 class="SQtitle2 SQblack">Mes informations</h1><br/><br/>
      <div class="pret_liste">
      <p>M. BOISSIER Maguy</p>
      <p><b>Numéro de carte : </><?php echo $_SESSION["username"]?></p>

@@ -53,6 +53,7 @@ export const fetchLoanByAccount = async (dispatch,account,existingLoans) => {
       return dispatch(fetchLoanSuccess(account.cardId, newLoanList));
     } catch (error) {
       console.log('fetchLoanError', error);
-      //dispatch(fetchLoanError('1000', error));
+      await dispatch(fetchLoanError(account.cardId, error));
+      //await dispatch(fetchLoanError(account.cardId, error));
     }
   }

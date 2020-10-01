@@ -6,9 +6,9 @@ const USER_AGENT =
 const login = async (cardId, password) => {
   try {
     let clearCookieBeforeSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
-    //console.log('CookieManager.clearAll =>', clearCookieBeforeSuccess);
+    console.log('process.env.REACT_APP_URL_LOGIN', process.env['REACT_APP_URL_LOGIN']);
 
-    let res = await fetch(process.env.REACT_APP_URL_LOGIN, {
+    let res = await fetch(process.env['REACT_APP_URL_LOGIN'], {
       method: 'POST',
       headers: {
         'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -26,9 +26,9 @@ const login = async (cardId, password) => {
         '&wp-submit=Se connecter&redirect_to=http://www.la-bibliotheque.com/espace-prive',
     });
 
-    //console.log(res.headers.get('content-type'));
-    //console.log(res.url, process.env.REACT_APP_URL_LOGIN);
-    if (res.url == process.env.REACT_APP_URL_LOGIN) {
+    console.log(res.headers.get('content-type'));
+    console.log(res.url, process.env['REACT_APP_URL_LOGIN']);
+    if (res.url == process.env['REACT_APP_URL_LOGIN']) {
       // http://www.la-bibliotheque.com/espace-prive/ http://www.la-bibliotheque.com/votre-espace/
       throw new Error('Erreur de saisie, veuillez recommencer');
     }
@@ -37,7 +37,7 @@ const login = async (cardId, password) => {
     account.password = password;
 
     // Get cookies for a url
-    let cookies = await CookieManager.get(process.env.REACT_APP_URL_LOGIN);
+    let cookies = await CookieManager.get(process.env['REACT_APP_URL_LOGIN']);
     const phpSessionId = Object.keys(cookies)
       .filter((key) => 'PHPSESSID' == key)
       .reduce((obj, key) => {
@@ -61,7 +61,7 @@ const login = async (cardId, password) => {
     account.token = bodyText.substr(bodyText.indexOf('token=') + 6, 33); // var wbs_url = 'http://www.la-bibliotheque.com/osiros/web/services/ws.pretsEnCours.php?token=osik58c2c9ds8vf1gb56dza5c6132cq6s&id_user=5685';
     //account.tokenValidUntil
     let blockMesInfos = bodyText.substr(
-      bodyText.indexOf('Mes informations</h1><br><br>') + 50,
+      bodyText.indexOf('Mes informations</h1><br/><br/>') + 50,
       310,
     );
     //console.log(account, 'Mes informations', blockMesInfos);
@@ -74,7 +74,7 @@ const login = async (cardId, password) => {
     //<p>M. DURAND Didier</p>
     //<p><b>Numéro de carte : </b>974442</p>
     //<p><b>Date de réabonnement à La Bibliothèque : </b>13/10/2017</p>
-    //console.log('account',account);
+    console.log('account',account);
     return account;
   } catch (error) {
     throw error;
@@ -85,20 +85,21 @@ const checkStatus = (response) => {
   if (response.ok) {
     return response;
   } else {
-    let error = new Error(response.statusText);
+    let error = new Error(response.status);
     error.response = response;
+    console.log('http',error,response)
     throw error;
   }
 };
 
 const fetchAccountLoans = async (account) => {
   let queryLoan =
-    process.env.REACT_APP_URL_LOAN +
+    process.env['REACT_APP_URL_LOAN'] +
     '?token=' +
     account.token +
     '&id_user=' +
     account.userId;
-  //console.log(queryLoan);
+  console.log(queryLoan);
 
   try {
     let clearCookieSuccess = await CookieManager.clearAll(); //clearing cookies stored natively before each request
@@ -137,7 +138,7 @@ const fetchAccountLoans = async (account) => {
       const dateMaxString = obj.datePret.substr(-10);
       const [, day, month, year] = datePattern.exec(dateMaxString);
       obj.dateMax = new Date(year, month - 1, day).toString();
-      obj.picture = process.env.REACT_APP_URL_PICTURE + obj.picture;
+      obj.picture = process.env['REACT_APP_URL_PICTURE'] + obj.picture;
       obj.user_id = account.userId;
       obj.cardId = account.cardId;
       let idProlong = obj.linkProlongation.match(/idProlong=(\d*?)&ajax/);
@@ -155,7 +156,7 @@ const fetchAccountLoans = async (account) => {
 };
 
 const fetchRemoteNotice = async (idOsiros) => {
-  let queryNotice = process.env.REACT_APP_URL_NOTICE + idOsiros;
+  let queryNotice = process.env['REACT_APP_URL_NOTICE'] + idOsiros;
   //console.log(queryNotice);
   //les notices sont en public
   //let clearCookieSuccess = await CookieManager.clearAll(); 
@@ -265,7 +266,7 @@ async function storeLocalNotice(idOsiros, notice) {
 }
 
 async function prolongation(idProlong) {
-  let queryProlongation = process.env.REACT_APP_URL_PROLONGATION + idProlong;
+  let queryProlongation = process.env['REACT_APP_URL_PROLONGATION'] + idProlong;
   //console.log(queryProlongation);
     //let clearCookieSuccess = await CookieManager.clearAll(); 
   //mais au final, il n'y en pas besoin car le ws utilise seulement le token en param

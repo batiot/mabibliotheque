@@ -46,6 +46,10 @@ function AccountListScreen({accounts, navigation, deleteAccount}) {
                 <Text note>
                   {account.cardStartDate}
                 </Text>
+                {account.error && (
+                <Text note style={{color: material.brandDanger}}>
+                  {account.error.message}
+                </Text>)}
               </Body>
               <Right>
                 <Button

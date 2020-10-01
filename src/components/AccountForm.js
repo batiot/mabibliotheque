@@ -131,11 +131,12 @@ function loginThunk(credentials,existingLoans) {
     // Perform the actual API call
     let accountData = await WS.login(credentials.cardId, credentials.password);
     //console.log('fetchAccountSuccess', accountData);
-    return await Promise.all([
-     await  dispatch(fetchAccountSuccess(accountData)),
-     await fetchLoanByAccount(dispatch, accountData,existingLoans)
+    //return await Promise.all([
+     await dispatch(fetchAccountSuccess(accountData)),
+     //On attends pas le chargement complet des prêts
+     fetchLoanByAccount(dispatch, accountData,existingLoans)
       //TODO also get & reservation
-    ]);
+    //]);
   };
 }
 

@@ -37,7 +37,7 @@ function LoanTab() {
 function BookingTab() {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Bientôt, gérez ici vos réservations</Text>
+      <Text>Prochainement, gérez ici vos réservations</Text>
     </View>
   );
 }

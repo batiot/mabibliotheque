@@ -43,6 +43,7 @@ export default function (state = initialStateAccounts, action) {
         draftState[action.payload].pending = true;
         draftState[action.payload].cardId = action.payload;
         draftState[action.payload].userName = '. . .';
+        draftState[action.payload].error = null;
         console.log('pending',draftState)
       });
     case FETCH_ACCOUNT_SUCCESS:

@@ -20,12 +20,11 @@ import {
   fetchLoanPending,
   fetchLoanSuccess,
   fetchLoanError,
-  fetchLoanByAccount
+  fetchLoanByAccount,
 } from '../actions/loanAction';
-
 const LoanPicture = (props) => (
   <FastImage
-    style={{width: 200, height: 200}}
+    style={{height: 200, flex: 1}}
     source={{
       uri: props.url,
       priority: FastImage.priority.normal,
@@ -36,7 +35,7 @@ const LoanPicture = (props) => (
   //          headers: { 'User-Agent':          USER_AGENT},
 );
 
-function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
+function LoanDetailScreen({route, loans, accounts, navigation, prolongation}) {
   const currLoanId = route.params.loanId;
   const currLoan = loans.filter((loan) => loan.id == currLoanId).shift();
 
@@ -64,13 +63,13 @@ function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
         <Card style={{flex: 0}}>
           <CardItem header bordered>
             <Text>
-              {currLoan.notice.typeDocument} - {currLoan.notice.section}
+              {currLoan.notice.section} - {currLoan.notice.typeDocument}
             </Text>
           </CardItem>
+          <CardItem cardBody>
+            <LoanPicture url={currLoan.picture} />
+          </CardItem>
           <CardItem>
-            <Left>
-              <LoanPicture url={currLoan.picture} />
-            </Left>
             <Body>
               {currLoan.notice.description ? (
                 <Text>
@@ -80,7 +79,8 @@ function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
                   {'\n'}
                 </Text>
               ) : null}
-              {currLoan.notice.DCFormat ? (
+              {currLoan.notice.typeDocument == 'Jeu' &&
+              currLoan.notice.DCFormat ? (
                 <Text>
                   <Text style={{fontWeight: 'bold'}}>Format: </Text>
                   {'\n'}
@@ -90,8 +90,25 @@ function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
             </Body>
           </CardItem>
           <CardItem footer bordered>
-            <Text>Prêt jusqu'au {currDateLabel}   </Text>
-            {currLoan.idProlong?(<Button  disabled={currLoan.pending} onPress={() => prolongation(currLoan.idProlong,accounts[currLoan.cardId],loans)}><Text>Prolonger</Text></Button>):null}
+            <Body>
+              <Text>{accounts[currLoan.cardId].userName}</Text>
+              <Text>Prêt jusqu'au {currDateLabel} </Text>
+            </Body>
+            {currLoan.idProlong ? (
+              <Right>
+                <Button
+                  disabled={currLoan.pending}
+                  onPress={() =>
+                    prolongation(
+                      currLoan.idProlong,
+                      accounts[currLoan.cardId],
+                      loans,
+                    )
+                  }>
+                  <Text>Prolonger</Text>
+                </Button>
+              </Right>
+            ) : null}
           </CardItem>
         </Card>
       </Content>
@@ -99,17 +116,15 @@ function LoanDetailScreen({route, loans, accounts, navigation,prolongation}) {
   );
 }
 
-function prolongationThunk(idProlong,account, existingLoans) {
+function prolongationThunk(idProlong, account, existingLoans) {
   // Redux Thunk will inject dispatch here:
   return async (dispatch) => {
     // Perform the actual API call
     let prolongationSuccess = await WS.prolongation(idProlong);
     //console.log('prolongationSuccess', prolongationSuccess);
-    return await fetchLoanByAccount(dispatch, account,existingLoans);
+    return await fetchLoanByAccount(dispatch, account, existingLoans);
   };
 }
-
-
 
 const mapStateToProps = (state) => ({
   loans: state.loans,
@@ -118,7 +133,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    prolongation: (idProlong,account, loans) => dispatch(prolongationThunk(idProlong,account, loans)),
+    prolongation: (idProlong, account, loans) =>
+      dispatch(prolongationThunk(idProlong, account, loans)),
   };
 };
 

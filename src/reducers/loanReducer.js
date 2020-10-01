@@ -71,15 +71,15 @@ export default function (baseState = initialStateLoans, action) {
           })
           .forEach((loan) => {
             loan.pending = true;
+            loan.error = null;
           });
       });
     case FETCH_LOAN_SUCCESS:
       return produce(baseState, (draftState) => {
         let newLoanList = action.payload.loanList;
         let currentCardId = action.payload.cardId;
-
         //use a reverse for-loop:
-        for (index = draftState.length - 1; index >= 0; index -= 1) {
+        for (let index = draftState.length - 1; index >= 0; index -= 1) {
           if(draftState[index].cardId == currentCardId){
             //Pour ceux de cette carte
             draftState[index].pending = false;

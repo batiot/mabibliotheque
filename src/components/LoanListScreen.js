@@ -11,7 +11,7 @@ import {
   Title,
   Content,
   Left,
-  Picker,
+  Spinner
 } from 'native-base';
 import FastImage from 'react-native-fast-image';
 import material from '../../native-base-theme/variables/material';
@@ -26,7 +26,7 @@ import {WS} from '../services';
 
 const LoanPicture = (props) => (
   <FastImage
-    style={{width: 60, height: 60}}
+    style={{width: 60, height: 70}}
     source={{
       uri: props.url,
       priority: FastImage.priority.normal,
@@ -85,9 +85,10 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
           <Title>{loans.length} prêt(s) en cours.</Title>
         </Body>
         <Right>
+         {Object.values(loans).filter(loan =>loan.pending).length==0?(
           <Button transparent onPress={() => refreshLoans(accounts, loans)}>
             <Icon type="FontAwesome5" name="sync-alt" />
-          </Button>
+          </Button>):(<Spinner></Spinner>)}
         </Right>
       </Header>
       <Content>
@@ -105,6 +106,10 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
                   type={loan.notice.typeDocument}
                   dateMax={loan.dateMax}
                 />
+                {loan.error && (
+                <Text note style={{color: material.brandDanger}}>
+                  {loan.error.message}
+                </Text>)}
               </Body>
             </ListItem>
           ))}
