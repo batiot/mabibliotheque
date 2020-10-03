@@ -1,11 +1,6 @@
 import 'react-native-gesture-handler/jestSetup';
 import mockAsyncStorage from '@react-native-community/async-storage/jest/async-storage-mock';
 
-// persistReducer.js
-import { persistReducer as basePersistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
-
 jest.mock('react-native-reanimated', () => {
   const Reanimated = require('react-native-reanimated/mock');
 
