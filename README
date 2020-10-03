@@ -46,23 +46,7 @@ https://github.com/you-dont-need/You-Dont-Need-Momentjs
 Barcode with mask
 https://github.com/react-native-community/react-native-camera/blob/master/docs/RNCamera.md#subviews
 
-<View>
-  <Item error={error && touched}>
-    <Icon active name={input.name === "email" ? "person" : "unlock"} />
-    <Input
-      ref={c => (this.textInput = c)}
-      placeholder={input.name === "email" ? "Email" : "Password"}
-      secureTextEntry={input.name === "password" ? true : false}
-      {...input}
-    />
-  </Item>
-  {error && touched && <Text>Please enter valid data</Text>}
-</View>
-
-<InputGroup 
-  iconRight 
-  success={this.state.inputSuccess ? true : false} 
-  error={this.state.inputError ? true : false}>
-  <Input placeholder='Textbox'/>
-</InputGroup>
-<Icon name={this.state.inputSuccess ? 'checkmark-circle' : 'close-circle'}/>
+Test
+https://reactnavigation.org/docs/testing/
+https://react-native-community.github.io/async-storage/docs/advanced/jest/
+https://github.com/rt2zz/redux-persist/issues/802

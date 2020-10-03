@@ -8,7 +8,7 @@
     "start": "react-native start",
     "local": "export $(grep -v '^#' .env.local | xargs) && watchman watch-del-all && react-native start -- --reset-cache",
     "remote": "export $(grep -v '^#' .env | xargs) && watchman watch-del-all && react-native start -- --reset-cache",
-    "test": "jest",
+    "notest": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -45,6 +45,9 @@
     "react-test-renderer": "16.13.1"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "setupFiles": [
+      "<rootDir>/jest/setup.js"
+    ]
   }
 }
