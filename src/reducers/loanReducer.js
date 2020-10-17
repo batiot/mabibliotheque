@@ -2,6 +2,9 @@ import {
   FETCH_LOAN_PENDING,
   FETCH_LOAN_SUCCESS,
   FETCH_LOAN_ERROR,
+  LOAN_CHECK,
+  LOAN_UNCHECK,
+  LOAN_SORT
 } from '../actions/actionTypes';
 
 import produce from 'immer';
@@ -70,6 +73,7 @@ export default function (baseState = initialStateLoans, action) {
             return loan.cardId == action.payload;
           })
           .forEach((loan) => {
+            loan.check = false;
             loan.pending = true;
             loan.error = null;
           });
@@ -125,6 +129,32 @@ export default function (baseState = initialStateLoans, action) {
             loan.pending = false;
             loan.error = action.error;
           });
+      });
+    case LOAN_CHECK:
+      return produce(baseState, (draftState) => {
+        draftState
+          .filter((loan) => {
+            return loan.id == action.payload;
+          })
+          .forEach((loan) => {
+            loan.check = true;
+          });
+      });
+    case LOAN_UNCHECK:
+      return produce(baseState, (draftState) => {
+        draftState
+          .filter((loan) => {
+            return loan.id == action.payload;
+          })
+          .forEach((loan) => {
+            loan.check = false;
+          });
+      });
+    case LOAN_SORT:
+      return produce(baseState, (draftState) => {
+        draftState.sort((a, b) =>{
+          return a[action.payload].localeCompare(b[action.payload]);
+        });
       });
     default: {
       return baseState;

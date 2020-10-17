@@ -1,4 +1,4 @@
-import { FETCH_LOAN_PENDING,FETCH_LOAN_SUCCESS,FETCH_LOAN_ERROR } from "./actionTypes";
+import { FETCH_LOAN_PENDING,FETCH_LOAN_SUCCESS,FETCH_LOAN_ERROR,LOAN_UNCHECK,LOAN_CHECK,LOAN_SORT } from "./actionTypes";
 import {WS} from '../services';
 
 /**
@@ -10,6 +10,39 @@ export const fetchLoanPending = cardId => {
         type: FETCH_LOAN_PENDING,
         payload: cardId
     }
+}
+
+/**
+ * mark loan as checked
+ * @param {object} loanId The loan id
+ */
+export const loanCheck = loanId => {
+  return {
+      type: LOAN_CHECK,
+      payload: loanId
+  }
+}
+
+/**
+ * mark loan as unchecked
+ * @param {object} loanId The loan id
+ */
+export const loanUnCheck = loanId => {
+  return {
+      type: LOAN_UNCHECK,
+      payload: loanId
+  }
+}
+
+/**
+ * sort loan
+ * @param {object} sortBy the sort by loan attributes name
+ */
+export const loanSort = sortBy => {
+  return {
+      type: LOAN_SORT,
+      payload: sortBy
+  }
 }
 
 /**

@@ -11,18 +11,16 @@ import {
   Title,
   Content,
   Left,
-  Spinner
+  View,
+  Spinner,
+  Container,
 } from 'native-base';
 import FastImage from 'react-native-fast-image';
+import {TouchableHighlight} from 'react-native';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
-import {
-  fetchLoanPending,
-  fetchLoanSuccess,
-  fetchLoanError,
-  fetchLoanByAccount
-} from '../actions/loanAction';
-import {WS} from '../services';
+import {fetchLoanByAccount,loanUnCheck,loanCheck} from '../actions/loanAction';
 
 const LoanPicture = (props) => (
   <FastImage
@@ -77,7 +75,76 @@ const TypeText = (props) => {
   );
 };
 
-function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
+function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanCheck,dispatchLoanUnCheck}) {
+  const renderHiddenItem = () => (
+    <ListItem style={{  flex: 1,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'flex-start',
+      paddingRight: 0,
+      paddingTop: 0,
+      }}>
+      <View
+        style={{
+          width: 75,
+          height: 75,
+          alignItems: 'flex-start',
+          padding: 25
+        }}>
+        <Icon active type="FontAwesome5"  name="lock" />
+      </View>
+      <View
+        style={{
+          width: 75,
+          height: 75,
+          alignItems: 'flex-end',
+          padding:20
+        }}>
+        <Icon active type="FontAwesome5"  name="unlock-alt" />
+      </View>
+    </ListItem>
+  );
+
+  const renderItem = (data) => (
+    <ListItem
+      key={data.item.id}
+      thumbnail
+      onPress={() => navigation.navigate('LoanDetail', {loanId: data.item.id})}
+      style={{
+        backgroundColor: data.item.check?'#828282':'#f2f2f2'
+      }}>
+      <Left>
+        <LoanPicture url={data.item.picture} />
+      </Left>
+      <Body>
+        <Text key={data.item.id}>{data.item.titre}</Text>
+        <TypeText
+          type={data.item.notice.typeDocument}
+          dateMax={data.item.dateMax}
+        />
+        {data.item.error && (
+          <Text note style={{color: material.brandDanger}}>
+            {data.item.error.message}
+          </Text>
+        )}
+      </Body>
+    </ListItem>
+  );
+
+  const onLeftActionStatusChange = (event) => {
+    if(event.isActivated){
+      //console.log('onLeftActionStatusChange', event);
+      dispatchLoanCheck(event.key);
+    }
+  };
+
+  const onRightActionStatusChange = (event) => {
+    if(event.isActivated){
+      //console.log('onRightActionStatusChange', event);
+      dispatchLoanUnCheck(event.key);
+  }
+  };
+
   return (
     <>
       <Header>
@@ -85,36 +152,31 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans}) {
           <Title>{loans.length} prêt(s) en cours.</Title>
         </Body>
         <Right>
-         {Object.values(loans).filter(loan =>loan.pending).length==0?(
-          <Button transparent onPress={() => refreshLoans(accounts, loans)}>
-            <Icon type="FontAwesome5" name="sync-alt" />
-          </Button>):(<Spinner></Spinner>)}
+          {Object.values(loans).filter((loan) => loan.pending).length == 0 ? (
+            <Button transparent onPress={() => refreshLoans(accounts, loans)}>
+              <Icon type="FontAwesome5" name="sync-alt" />
+            </Button>
+          ) : (
+            <Spinner></Spinner>
+          )}
         </Right>
       </Header>
-      <Content>
-      <List>
-          {Object.values(loans).map((loan) => (
-            <ListItem key={loan.id} thumbnail onPress={() =>
-              navigation.navigate('LoanDetail', {loanId: loan.id})
-            }>
-              <Left>
-                <LoanPicture url={loan.picture} />
-              </Left>
-              <Body>
-                <Text key={loan.id}>{loan.titre}</Text>
-                <TypeText
-                  type={loan.notice.typeDocument}
-                  dateMax={loan.dateMax}
-                />
-                {loan.error && (
-                <Text note style={{color: material.brandDanger}}>
-                  {loan.error.message}
-                </Text>)}
-              </Body>
-            </ListItem>
-          ))}
-        </List>
-      </Content>
+
+      <SwipeListView
+
+        style={{
+          borderColor: material.listBorderColor,
+
+        }}
+        data={Object.values(loans)}
+        keyExtractor={(loan) => loan.id.toString()}
+        renderItem={renderItem}
+        renderHiddenItem={renderHiddenItem}
+        leftActivationValue={75}
+        rightActivationValue={-75}
+        onLeftActionStatusChange={onLeftActionStatusChange}
+        onRightActionStatusChange={onRightActionStatusChange}
+      />
     </>
   );
 }
@@ -123,8 +185,8 @@ function fetchLoansThunk(accounts, existingLoans) {
   // Redux Thunk will inject dispatch here:
   return async (dispatch) => {
     //Pour chaque account
-    for (let cardId of  Object.keys(accounts)) {
-      await fetchLoanByAccount(dispatch, accounts[cardId],existingLoans);
+    for (let cardId of Object.keys(accounts)) {
+      await fetchLoanByAccount(dispatch, accounts[cardId], existingLoans);
     }
   };
 }
@@ -138,6 +200,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     refreshLoans: (accounts, loans) =>
       dispatch(fetchLoansThunk(accounts, loans)),
+      dispatchLoanCheck: (loanId) => dispatch(loanCheck(loanId)),
+      dispatchLoanUnCheck: (loanId) => dispatch(loanUnCheck(loanId)),
   };
 };
 
