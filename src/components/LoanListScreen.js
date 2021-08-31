@@ -14,13 +14,14 @@ import {
   View,
   Spinner,
   Container,
+  Picker
 } from 'native-base';
 import FastImage from 'react-native-fast-image';
 import {TouchableHighlight} from 'react-native';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import material from '../../native-base-theme/variables/material';
 import {connect} from 'react-redux';
-import {fetchLoanByAccount,loanUnCheck,loanCheck} from '../actions/loanAction';
+import {fetchLoanByAccount,loanUnCheck,loanCheck,loanSort} from '../actions/loanAction';
 
 const LoanPicture = (props) => (
   <FastImage
@@ -75,7 +76,7 @@ const TypeText = (props) => {
   );
 };
 
-function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanCheck,dispatchLoanUnCheck}) {
+function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanCheck,dispatchLoanUnCheck,dispatchLoanSort}) {
   const renderHiddenItem = () => (
     <ListItem style={{  flex: 1,
       flexDirection:'row',
@@ -83,22 +84,23 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanC
       alignItems:'flex-start',
       paddingRight: 0,
       paddingTop: 0,
+      borderColor: 'transparent'
       }}>
       <View
         style={{
           width: 75,
-          height: 75,
+          height: 80,
           alignItems: 'flex-start',
-          padding: 25
+          padding: 25,
         }}>
         <Icon active type="FontAwesome5"  name="lock" />
       </View>
       <View
         style={{
           width: 75,
-          height: 75,
+          height: 80,
           alignItems: 'flex-end',
-          padding:20
+          padding:20,
         }}>
         <Icon active type="FontAwesome5"  name="unlock-alt" />
       </View>
@@ -111,7 +113,7 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanC
       thumbnail
       onPress={() => navigation.navigate('LoanDetail', {loanId: data.item.id})}
       style={{
-        backgroundColor: data.item.check?'#828282':'#f2f2f2'
+        backgroundColor: data.item.check?'#727272':'#f2f2f2'
       }}>
       <Left>
         <LoanPicture url={data.item.picture} />
@@ -152,6 +154,17 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanC
           <Title>{loans.length} prêt(s) en cours.</Title>
         </Body>
         <Right>
+            <Picker
+              mode="dropdown"
+              iosHeader="Trie"
+              iosIcon={<Icon name="arrow-down" />}
+              style={{ width: undefined, color:material.toolbarInputColor }}
+              selectedValue="titre"
+              onValueChange={(itemValue, itemIndex) => dispatchLoanSort(itemValue)}
+            >
+              <Picker.Item label="Carte" value="cardId" />
+              <Picker.Item label="Titre" value="titre" />
+            </Picker>
           {Object.values(loans).filter((loan) => loan.pending).length == 0 ? (
             <Button transparent onPress={() => refreshLoans(accounts, loans)}>
               <Icon type="FontAwesome5" name="sync-alt" />
@@ -174,6 +187,8 @@ function LoanListScreen({loans, accounts, navigation, refreshLoans,dispatchLoanC
         renderHiddenItem={renderHiddenItem}
         leftActivationValue={75}
         rightActivationValue={-75}
+        stopLeftSwipe={300}
+        stopRightSwipe={-300}
         onLeftActionStatusChange={onLeftActionStatusChange}
         onRightActionStatusChange={onRightActionStatusChange}
       />
@@ -202,6 +217,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(fetchLoansThunk(accounts, loans)),
       dispatchLoanCheck: (loanId) => dispatch(loanCheck(loanId)),
       dispatchLoanUnCheck: (loanId) => dispatch(loanUnCheck(loanId)),
+      dispatchLoanSort: (sortBy) => dispatch(loanSort(sortBy)),
   };
 };
 
