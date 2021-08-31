@@ -1,3 +1,12 @@
+Ma bibliothèque
+
+Gestion des prêts réalisé auprès des bibliothèques de la ville de Saint Herblain
+
+Gratuit et sans publicité, Ma Bibliothèque vous permet de consulter la liste de ses prêts de livres,bd,jeux... effectué auprès des bibliothèques de la ville de Saint Herblain.
+
+Ajoutez autant de carte de bibliothèque que vous le souhaitez pour gérer dans un seul endroit l'ensemble des comptes de votre famille.
+Sur le détail de chaque prêt vous avez la possibilité de demander sa prolongation.
+Vous avez aussi la possibilité de faire un mini inventaire sur votre liste pour préparer vos retours.
 
 
 Credits:
@@ -50,3 +59,34 @@ Test
 https://reactnavigation.org/docs/testing/
 https://react-native-community.github.io/async-storage/docs/advanced/jest/
 https://github.com/rt2zz/redux-persist/issues/802
+
+https://github.com/jemise111/react-native-swipe-list-view
+https://blog.reactnativecoach.com/understanding-flex-in-react-native-b34dfb4b16d1
+
+https://rnfirebase.io/ analytics/crashlitics/messenging/perf
+
+deploy
+https://devcenter.bitrise.io/deploy/android-deploy/deploying-android-apps/
+
+
+Image de présentation
+Fichier JPEG ou PNG 24 bits (non transparent)
+1 024 px sur 500 px
+Jusqu'à 1 Mo
+
+
+Déposez ici les fichiers PNG ou JPEG à importer
+Importez jusqu'à huit captures d'écran de tablettes 7 pouces
+
+Fichier JPEG ou PNG 24 bits (non transparent)
+Entre 320 px et 3 840 px
+Format 16:9 (pour des captures d'écran en mode paysage)
+
+
+Déposez ici les fichiers PNG ou JPEG à importer
+Importez jusqu'à huit captures d'écran de tablettes 10 pouces
+
+Fichier JPEG ou PNG 24 bits (non transparent)
+Entre 320 px et 3 840 px
+Format 16:9 (pour des captures d'écran en mode paysage)
+Jusqu'à 8 Mo
