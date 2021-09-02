@@ -10,7 +10,7 @@
     "remote": "export $(grep -v '^#' .env | xargs) && watchman watch-del-all && react-native start -- --reset-cache",
     "test": "jest",
     "lint": "eslint .",
-    "release-android" : "./android/gradlew bundleRelease"
+    "release-android" : "cd android && ./gradlew bundleRelease"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.0",
